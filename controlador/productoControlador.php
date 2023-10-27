@@ -8,8 +8,8 @@ if(isset($_GET['opc'])){
     switch($_GET['opc']){
         case 1:
             //insert
-            $producto->crearProducto();
-            echo 'insertado xxd';
+            $idProducto=$producto->crearProducto();
+            echo $idProducto;
             break;
         case 2:
             $productos=$producto->obtenerImagenProducto();

@@ -8,20 +8,22 @@ class ProductModel{
     }
 
     public function crearProducto() {
-        $nombre=$_POST['nombre']; 
-        $descripcion=$_POST['descripcion'];
-        $precio=$_POST['precio']; 
+        $nombre=$_POST['txtNombre']; 
+        $descripcion=$_POST['txtAp'];
+        $precio=$_POST['txtPm']; 
         $idCategoria= $_POST['idCategoria'];
         $imagen=$_POST['imagen'];
+        
         try {
-            $stmt = $this->conexion->prepare("INSERT INTO producto (nombre, descripcion, precio, idCategoria, imagen) VALUES (:nombre, :descripcion, :precio, :idCategoria, :imagen)");
+            $stmt = $this->conexion->prepare("INSERT INTO producto (nombre, descripcion, precio, idCategoria, imagen) VALUES (:nombre, :descripcion, :precio, :idCategoria, :imagen);");
             $stmt->bindParam(':nombre', $nombre);
             $stmt->bindParam(':descripcion', $descripcion);
             $stmt->bindParam(':precio', $precio);
             $stmt->bindParam(':idCategoria', $idCategoria);
             $stmt->bindParam(':imagen', $imagen);
             $stmt->execute();
-            return $this->conexion->lastInsertId(); // Retorna el ID del nuevo producto
+            $idProducto= $this->conexion->lastInsertId(); 
+            return $idProducto;// Retorna el ID del nuevo producto
         } catch (PDOException $e) {
             die("Error al crear producto: " . $e->getMessage());
         }

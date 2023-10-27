@@ -83,21 +83,6 @@
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-        function insertar() {
-            var formData = $('#formRegister').serialize();
-            $.ajax({
-                type: "POST",
-                url: "../controlador/productoControlador.php?opc=1",
-                data: formData,
-                success: function(data) {
-                    window.location.href = '../cards.php';
-                },
-            })
-        }
-    </script>
-
     <script>
         function obtenerCategoria() {
             $.ajax({
@@ -105,7 +90,18 @@
                 data: {},
                 url: "../controlador/categoriaControlador.php?opc=1",
                 success: function(data) {
-                    $('#miDropdown').html(data);
+                    $('#miDropdown').empty();
+                    $('#miDropdown').append($('<option>', {
+                        value: '',
+                        text: 'Seleccionar Categoría'
+                    }));
+                    var categorias = JSON.parse(data);
+                    categorias.forEach(function(categoria) {
+                        $('#miDropdown').append($('<option>', {
+                            value: categoria.idCategoria,
+                            text: categoria.nombre
+                        }));
+                    });
                 }
             });
         }
@@ -132,7 +128,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             // Obtén una referencia al elemento <select> de categorías
             var selectCategoria = document.getElementById("miDropdown");
-            var selectImagen =document.getElementById("miDropdown2");
+            var selectImagen = document.getElementById("miDropdown2");
             // Agrega un oyente de eventos al elemento <select>
             selectCategoria.addEventListener("change", function() {
                 // Obtén el valor seleccionado
@@ -156,13 +152,45 @@
                 // Obtén el valor seleccionado
                 var selectedOption = selectImagen.options[selectImagen.selectedIndex];
                 var imagen = selectedOption.value;
-                alert('la imagen es' + imagen );
+                alert('la imagen es' + imagen);
 
             });
 
 
         });
     </script>
+    <script>
+        function insertar() {
+            // Obtén el valor seleccionado de la categoría
+            console.log('La función insertar() se ha llamado correctamente.');
+            var idCategoria = $('#miDropdown').val();
+            // Obtén el valor seleccionado de la imagen
+            var imagen = $('#miDropdown2').val();
+
+            // Agrega el ID de la categoría y la imagen a los datos del formulario
+            var formData = $('#formRegister').serialize() + '&idCategoria=' + idCategoria + '&imagen=' + imagen;
+            //var formData = $('#formRegister').serialize();
+            console.log(idCategoria+ imagen);
+
+            $.ajax({
+                type: "POST",
+                data: formData,
+                url: "../controlador/productoControlador.php?opc=1",
+                success: function(data) {
+                    window.location.href = '../cards.php';
+                },
+            })
+            
+        }
+        $(document).ready(function() {
+        $('#formRegister').submit(function(event) {
+            event.preventDefault(); // Evita el envío del formulario por defecto
+            insertar(); // Llama a la función insertar() para enviar los datos del formulario
+        });
+    });
+    </script>
+
+   
 
     <title>Document</title>
 </head>
@@ -171,7 +199,7 @@
     <main>
         <div class="contactUs container">
             <h3>Registrar producto</h3>
-            <form id="formRegister">
+            <form id="formRegister" method="post">
                 <div class="form-group">
                     <label for="txtNombre">Nombre</label>
                     <input type="text" id="txtNombre" name="txtNombre" />
@@ -187,14 +215,14 @@
 
                 <div class="form-group">
                     <label for="miDropdown">Categoria</label>
-                    <select id="miDropdown" class="categorias">
+                    <select id="miDropdown" class="categorias" name="idCategoria">
                         <option value="opcion1"></option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="miDropdown2">Imagen</label>
-                    <select id="miDropdown2" class="imagenes">
+                    <select id="miDropdown2" class="imagenes" name="imagen">
                         <option value="opcion1"></option>
                     </select>
                 </div>

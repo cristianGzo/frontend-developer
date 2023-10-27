@@ -32,7 +32,7 @@ class CategoriaModel{
     }
     public function obtenerCategoria() {
         try {
-            $stmt = $this->conexion->prepare("SELECT nombre FROM categoria");
+            $stmt = $this->conexion->prepare("SELECT idCategoria, nombre FROM categoria");
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
