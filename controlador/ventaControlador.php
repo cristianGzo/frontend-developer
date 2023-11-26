@@ -1,5 +1,5 @@
 <?php 
-require_once '../models/VentaModel.';
+require_once '../models/VentaModel.php';
 require_once '../models/conexion.php';
 
 if(isset($_GET['opc'])){

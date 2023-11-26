@@ -10,28 +10,34 @@ class CarritoModel{
     
 
     public function crearCarrito() {
-        $idUsuario=$_POST['idUsuario']; 
-        $idProducto=$_POST['idProducto'];
-        $cantidad=$_POST['cantidad']; 
-        $fechaActualizacion= $_POST['fechaAgregado'];
+        $idUsuario = $_POST['idUsuario']; 
+        $idProducto = $_POST['idProducto'];
+        $cantidad = $_POST['cantidad']; 
+        $fechaActualizacion = $_POST['fechaAgregado'];
+        
         try {
             $stmt = $this->conexion->prepare("INSERT INTO carrito (idUsuario, idProducto, cantidad, fechaAgregado) VALUES (:idUsuario, :idProducto, :cantidad, :fechaAgregado)");
+            if ($stmt === false) {
+                echo "Error en la preparación de la consulta.";
+                return -1; // Otra indicación de error
+            }
+            
             $stmt->bindParam(':idUsuario', $idUsuario);
             $stmt->bindParam(':idProducto', $idProducto);
             $stmt->bindParam(':cantidad', $cantidad);
             $stmt->bindParam(':fechaAgregado', $fechaActualizacion);
             echo "Consulta SQL: " . $stmt->queryString;
-            //return $this->conexion->lastInsertId(); // Retorna el ID del nuevo producto
+            
             if ($stmt->execute()) {
                 return $this->conexion->lastInsertId(); // Retorna el ID del nuevo producto
             } else {
-                echo "Error al ejecutar la consulta: " . implode(", ", $stmt->errorInfo());
                 return -1; // Otra indicación de error
             }
         } catch (PDOException $e) {
             die("Error al crear producto: " . $e->getMessage());
         }
     }
+    
     public function obtenerCarrito() {
         try {
             $stmt = $this->conexion->prepare("SELECT
@@ -69,23 +75,26 @@ class CarritoModel{
         }
     }
     public function eliminarDeCarrito(){
-        $idCarrito=$_POST['idCarrito'];
+        $idCarrito = $_POST['idCarrito'];
         try {
-            $stmt = $this->conexion->prepare("DELETE FROM carrito
-            WHERE idCarrito = :idCarrito;");
+            $stmt = $this->conexion->prepare("DELETE FROM carrito WHERE idCarrito = :idCarrito;");
             $stmt->bindParam(':idCarrito', $idCarrito);
-            //echo "Consulta SQL: " . $stmt->queryString;
-            //return $this->conexion->lastInsertId(); // Retorna el ID del nuevo producto
+            
+            if ($stmt === false) {
+                return "Error en la preparación de la consulta de eliminación.";
+            }
+    
             if ($stmt->execute()) {
                 $carritoActualizado = $this->obtenerCarrito();
-                //echo json_encode($carritoActualizado);
+                $precioActual = $this->costoCarrito();
+                return "Operación exitosa";
             } else {
-                echo "Error al ejecutar la consulta: " . implode(", ", $stmt->errorInfo());
-                return false; // Otra indicación de error
+                return "Error al ejecutar la consulta de eliminación.";
             }
         } catch (PDOException $e) {
-            die("Error al eliminar producto: " . $e->getMessage());
+            return "Error al eliminar producto: " . $e->getMessage();
         }
     }
+     
 }
 ?>

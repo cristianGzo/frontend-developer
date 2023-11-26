@@ -1,12 +1,16 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['idUsuario'])) {
+    // Si no hay una sesión activa, redirigir al usuario a la página de inicio de sesión.
+    header("Location: login.php");
+    exit(); // el script se detniene después de redirigir al usuario.
+}
 // Incluye la clase Conexion y ProductModel
-include './models/conexion.php'; // Asegúrate de que el archivo tenga la definición de la clase Conexion.
-include './models/product_model.php'; // Asegúrate de que el archivo tenga la definición de la clase ProductModel.
+include './models/conexion.php';
+include './models/product_model.php';
 require './models/CarritoModel.php';
 
-/* Crea una instancia de la clase Conexion y ProductModel
-$conexion = new Conexion();
-$conn = $conexion->conectar();*/
 $productModel = new ProductModel();
 
 // Obtén los datos de productos desde la base de datos
@@ -62,6 +66,16 @@ $productos = $productModel->obtenerProductos();
             width: 240px;
         }
 
+        .nav-profile {
+            position: relative;
+            display: inline-block;
+        }
+
+        .nav-profile img {
+            width: 50px;
+            height: 50px;
+        }
+
         .product-card img {
             width: 100%;
             height: 240px;
@@ -107,6 +121,26 @@ $productos = $productModel->obtenerProductos();
             background-color: transparent;
         }
 
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            z-index: 1;
+        }
+
+        .nav-profile:hover .dropdown-content {
+            display: block;
+        }
+
+
         @media (max-width: 640px) {
             .cards-container {
                 grid-template-columns: repeat(auto-fill, 140px);
@@ -122,11 +156,26 @@ $productos = $productModel->obtenerProductos();
             }
         }
     </style>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function logout() {
+            $.ajax({
+                type: "POST",
+                data: {},
+                url: "./controlador/sesionControlador.php?opc=2",
+                success: function(data) {
+                    console.log("Sesión Cerrada");
+                    window.location.replace('./login.php');
+                }
+            });
+        }
+    </script>
 </head>
 
 <body>
+
+
+
     <nav>
         <img src="./icons/icon_menu.svg" alt="menu" class="menu">
         <div class="navbar-left">
@@ -149,25 +198,35 @@ $productos = $productModel->obtenerProductos();
                     <a href="./view/newProduct.php">Add Product</a>
                 </li>
                 <li>
-                    <a href="/">Others</a>
+                    <a href="./view/adminDashboard.php">Ghrapics</a>
                 </li>
             </ul>
         </div>
-        <class class="navbar-right">
+        <div class="navbar-right" id="menu-container">
             <ul>
-                <li class="aboutUs">
-                    <a href="./aboutUs.html">About us</a>
+                <li class="nav-profile">
+                    <img src="./images/perfil.png" alt="Profile">
+                    <div class="dropdown-content">
+                        <p><?php echo $_SESSION['nombre']; ?></p>
+                        <p><?php echo $_SESSION['email']; ?></p>
+                        <div>
+                        <p>
+                        <a href="./view/historialView.html" class="estilo">Tus compras</a>
+                        </p>
+                        <p><a href="#" onclick="logout();" class="estilo">Cerrar sesión</a></p>
+                        </div>
+                    </div>
                 </li>
-                <li class="nav-email">example@gmail.com</li>
+                <li class="nav-email"><?php echo $_SESSION['email']; ?></li>
 
                 <li class="navbar-cart">
-                    <a href="./shopping-cart.php">
+                    <a href="./shopping-cart.php" class="cart-link">
                         <img src="./icons/icon_shopping_cart.svg" alt="">
                     </a>
                 </li>
                 <div>2</div>
             </ul>
-        </class>
+        </div>
     </nav>
     <section class="main-container">
         <div class="cards-container">
@@ -187,10 +246,7 @@ $productos = $productModel->obtenerProductos();
                 </div>
             <?php } ?>
 
-
-
             <!--
-
             <div class="product-card">
                 <img src="https://images.pexels.com/photos/255934/pexels-photo-255934.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="" class="product">
                 <div class="info-card">
@@ -203,90 +259,7 @@ $productos = $productModel->obtenerProductos();
                     </button>
                 </div>    
             </div>
-            
-
-            <div class="product-card">
-                <img src="https://cdn.mos.cms.futurecdn.net/7SDNniA5URi5ssroxfBkCA.jpg" alt="" class="product">
-                <div class="info-card">
-                    <div class="texto">
-                        <p>$12000</p>
-                        <p>Laptop</p>
-                    </div>
-                    <figure>
-                        <img src="./icons/bt_add_to_cart.svg" alt="">
-                    </figure>
-                </div>    
-            </div>
-
-            <div class="product-card">
-                <img src="https://www.fayerwayer.com/resizer/LRx78KIAnZs5PXBx3POhLUEX90o=/1440x1080/filters:format(png):quality(70)/cloudfront-us-east-1.images.arcpublishing.com/metroworldnews/5YHFTB2JVNETNCJ2D5SP6FGKOU.png" alt="" class="product">
-                <div class="info-card">
-                    <div class="texto">
-                        <p>$12000</p>
-                        <p>Phone</p>
-                    </div>
-                    <figure>
-                        <img src="./icons/bt_add_to_cart.svg" alt="">
-                    </figure>
-                </div>    
-            </div>
-
-            <div class="product-card">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7syzGRyYeWOLlgw4mBCYx01VzJ0fknWYTOg&usqp=CAU" alt="" class="product">
-                <div class="info-card">
-                    <div class="texto">
-                        <p>$12000</p>
-                        <p>Car</p>
-                    </div>
-                    <figure>
-                        <img src="./icons/bt_add_to_cart.svg" alt="">
-                    </figure>
-                </div>    
-            </div>
-
-            <div class="product-card">
-                <img src="https://images.pexels.com/photos/255934/pexels-photo-255934.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="" class="product">
-                <div class="info-card">
-                    <div class="texto">
-                        <p>$12000</p>
-                        <p>Bike</p>
-                    </div>
-                    <figure>
-                        <img src="./icons/bt_add_to_cart.svg" alt="">
-                    </figure>
-                </div>    
-            </div>
-
-            <div class="product-card">
-                <img src="https://images.pexels.com/photos/255934/pexels-photo-255934.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="" class="product">
-                <div class="info-card">
-                    <div class="texto">
-                        <p>$12000</p>
-                        <p>Bike</p>
-                    </div>
-                    <figure>
-                        <img src="./icons/bt_add_to_cart.svg" alt="">
-                    </figure>
-                </div>    
-            </div>
-
-            <div class="product-card">
-                <img src="https://images.pexels.com/photos/255934/pexels-photo-255934.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="" class="product">
-                <div class="info-card">
-                    <div class="texto">
-                        <p>$12000</p>
-                        <p>Bike</p>
-                    </div>
-                    <figure>
-                        <img src="./icons/bt_add_to_cart.svg" alt="">
-                    </figure>
-                </div>    
-            </div>
-        -->
-
-
-
-
+            -->
         </div>
     </section>
 

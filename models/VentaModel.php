@@ -32,7 +32,7 @@ class VentaModel{
     }
     public function obtenerVenta() {
         try {
-            $stmt = $this->conexion->prepare("SELECT V.idVenta AS ID, U.nombre AS usuario, P.nombre AS producto, P.precio AS Precio_Producto, SUM(C.cantidad) AS Cantidad, SUM(C.cantidad * P.precio) AS costo FROM venta V JOIN usuario U ON V.idUsuario = U.idUsuario JOIN carrito C ON V.idUsuario = C.idUsuario JOIN producto P ON C.idProducto = P.idProducto WHERE V.idVenta = (SELECT MAX(idVenta) FROM venta) GROUP BY V.idVenta, U.nombre, P.nombre, P.precio;");
+            $stmt = $this->conexion->prepare("SELECT V.idVenta AS ID,P.idProducto as IDP, U.nombre AS usuario, P.nombre AS producto, P.precio AS Precio_Producto, SUM(C.cantidad) AS Cantidad, SUM(C.cantidad * P.precio) AS costo FROM venta V JOIN usuario U ON V.idUsuario = U.idUsuario JOIN carrito C ON V.idUsuario = C.idUsuario JOIN producto P ON C.idProducto = P.idProducto WHERE V.idVenta = (SELECT MAX(idVenta) FROM venta) GROUP BY V.idVenta, U.nombre, P.nombre, P.precio;");
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {

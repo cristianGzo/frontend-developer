@@ -70,5 +70,18 @@ class ProductModel{
         }
     }
 
+    public function productosMasVendidos() {
+        $fecha_inicio = $_POST['fecha_inicio'];
+        $fecha_fin = $_POST['fecha_fin'];
+        try {
+            $stmt = $this->conexion->prepare("SELECT p.nombre AS nombreProducto, SUM(dv.cantidad) AS totalVentas FROM producto p JOIN detalleventa dv ON p.idProducto = dv.idProducto JOIN venta v ON dv.idVenta = v.idVenta WHERE v.fecha BETWEEN '$fecha_inicio' AND '$fecha_fin' GROUP BY p.nombre;");
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return json_encode($result);
+        } catch (PDOException $e) {
+            die("Error al obtener productos: " . $e->getMessage());
+        }
+    }
+
 }
 ?>

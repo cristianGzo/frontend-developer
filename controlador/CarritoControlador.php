@@ -14,6 +14,7 @@ if(isset($_GET['opc'])){
         case 2:
             $eliminado=$carrito->eliminarDeCarrito();
             $carritoActualizado = $carrito->obtenerCarrito();
+            $costoActualizado = $carrito->costoCarrito();
             
             foreach ($carritoActualizado as $item) {
                 // Imprime cada producto en el carrito en formato HTML
@@ -25,6 +26,9 @@ if(isset($_GET['opc'])){
                 echo '<img src="./icons/icon_close.png" alt="close" onclick="eliminar(' . $item['idCarrito'] . ')">';
                 echo '</div>';
             }
+            echo '<script>';
+            echo 'document.getElementById("totalPrice").textContent = ' . $costoActualizado[0]['total_a_pagar'] . ';';
+            echo '</script>';
     }
 }else{
     header('Location: ../index.html');

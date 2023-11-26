@@ -29,7 +29,7 @@ nav{
     margin-left: 12px;
 }
 .navbar-left ul li a,
-.navbar-right ul li a{
+.navbar-right ul li a {
     text-decoration: none;
     color: #ff9f1c;
     border: 1px solid;  
@@ -37,6 +37,14 @@ nav{
     padding: 8px;
     border-radius: 8px;
 }
+.navbar-left ul li a.estilo,
+.navbar-right ul li a.estilo {
+    border: none; /* Elimina el borde */
+    padding: 0; /* Elimina el relleno */
+    border-radius: 0; /* Elimina la esquina redondeada si es necesario */
+}
+
+
 
 .navbar-left ul li a:hover,
 .navbar-right ul li a:hover{

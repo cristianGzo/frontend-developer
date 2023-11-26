@@ -197,21 +197,12 @@ $precioCarrito = $carritoModel->costoCarrito();
         <p>$30,00</p>
         <img src="./icons/icon_close.png" alt="close">
       </div>
-
-      <div class="shopping-cart">
-        <figure>
-          <img src="https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="bike">
-        </figure>
-        <p>Bike</p>
-        <p>$30,00</p>
-        <img src="./icons/icon_close.png" alt="close">
-      </div>
-    -->
+      -->
     <div class="order" id="order">
       <p>
         <span>Total</span>
       </p>
-      <p><?php echo $precioCarrito[0]['total_a_pagar']; ?></p>
+      <p id="totalPrice"><?php echo $precioCarrito[0]['total_a_pagar']; ?></p>
     </div>
 
     <button class="primary-button" id="checkout-button">
