@@ -8,7 +8,6 @@ $carritoModel = new CarritoModel();
 
 $carrito = $carritoModel->obtenerCarrito();
 $precioCarrito = $carritoModel->costoCarrito();
-
 ?>
 
 <!DOCTYPE html>
@@ -137,40 +136,40 @@ $precioCarrito = $carritoModel->costoCarrito();
   <script>
     function eliminar(idCarrito) {
       $.ajax({
-        type: "POST",        
+        type: "POST",
         url: "./controlador/CarritoControlador.php?opc=2",
-        data: {idCarrito: idCarrito},
-        success: function (data) {
+        data: {
+          idCarrito: idCarrito
+        },
+        success: function(data) {
           //aqui se puede decir que ya se elimino
           $('#my-order-content').html(data);
         },
-        error: function (xhr, status, error) {
-      // Manejar errores si la eliminación no fue exitosa
-      alert("Error al eliminar el producto: " + error);
-    },
+        error: function(xhr, status, error) {
+          // Manejar errores si la eliminación no fue exitosa
+          alert("Error al eliminar el producto: " + error);
+        },
       })
     }
   </script>
-  <script>      
-        
-        document.addEventListener("DOMContentLoaded", function() {
-    // Agrega un evento click al botón
-    document.getElementById('checkout-button').addEventListener('click', function() {
-      // Redirige al usuario a la página HTML de destino
-      window.location.href = './view/venta.php';
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Agrega un evento click al botón
+      document.getElementById('checkout-button').addEventListener('click', function() {
+        // Redirige al usuario a la página HTML de destino
+        window.location.href = './view/venta.php';
+      });
     });
-  });
-        
-    </script>
+  </script>
 </head>
 
 <body>
 
   <aside class="product-detail">
     <div class="title-container">
-    <a href="./cards.php">
-    <img src="./icons/flechita.svg" alt="arrow">
-  </a>
+      <a href="./cards.php">
+        <img src="./icons/flechita.svg" alt="arrow">
+      </a>
       <p class="title">My order</p>
     </div>
 
@@ -215,37 +214,37 @@ $precioCarrito = $carritoModel->costoCarrito();
 
   <script>
     $(document).ready(function() {
-            $('.primary-button').on('click', function() {
-                var userId = 1;
-                var fecha = fechaActual();
-                var total = <?php echo $precioCarrito[0]['total_a_pagar']; ?>;
+      $('.primary-button').on('click', function() {
+        var userId = 1;
+        var fecha = fechaActual();
+        var total = <?php echo $precioCarrito[0]['total_a_pagar']; ?>;
 
-                // Realiza una solicitud al servidor para agregar a pedido
-                var requestData = {
-                    idUsuario: userId,
-                    fecha: fecha,
-                    total: total
-                };
-                $.post('./controlador/ventaControlador.php?opc=1', requestData,
-                    function(data) {
-                        // Puedes manejar la respuesta del servidor aquí, por ejemplo, mostrar un mensaje de éxito.
-                        alert('Carrito agregado a la venta');
-                    });
-            });
-        });
+        // Realiza una solicitud al servidor para agregar a pedido
+        var requestData = {
+          idUsuario: userId,
+          fecha: fecha,
+          total: total
+        };
+        $.post('./controlador/ventaControlador.php?opc=1', requestData,
+          function(data) {
+            // Puedes manejar la respuesta del servidor aquí, por ejemplo, mostrar un mensaje de éxito.
+            alert('Carrito agregado a la venta');
+          });
+      });
+    });
 
-        function fechaActual() {
-            var fecha = new Date();
-            var dia = fecha.getDate();
-            var mes = fecha.getMonth() + 1; // Se suma 1 ya que los meses comienzan desde 0 (enero).
-            var anio = fecha.getFullYear();
+    function fechaActual() {
+      var fecha = new Date();
+      var dia = fecha.getDate();
+      var mes = fecha.getMonth() + 1; // Se suma 1 ya que los meses comienzan desde 0 (enero).
+      var anio = fecha.getFullYear();
 
-            // Formatea la fecha como 'YYYY-MM-DD'
-            if (mes < 10) mes = '0' + mes;
-            if (dia < 10) dia = '0' + dia;
+      // Formatea la fecha como 'YYYY-MM-DD'
+      if (mes < 10) mes = '0' + mes;
+      if (dia < 10) dia = '0' + dia;
 
-            return anio + '-' + mes + '-' + dia;
-        }
+      return anio + '-' + mes + '-' + dia;
+    }
   </script>
 </body>
 

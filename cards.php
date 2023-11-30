@@ -6,6 +6,7 @@ if (!isset($_SESSION['idUsuario'])) {
     header("Location: login.php");
     exit(); // el script se detniene después de redirigir al usuario.
 }
+$rolUsuario = $_SESSION['rol'];
 // Incluye la clase Conexion y ProductModel
 include './models/conexion.php';
 include './models/product_model.php';
@@ -195,10 +196,13 @@ $productos = $productModel->obtenerProductos();
                     <a href="/">Furnitures</a>
                 </li>
                 <li>
-                    <a href="./view/newProduct.php">Add Product</a>
-                </li>
-                <li>
-                    <a href="./view/adminDashboard.php">Ghrapics</a>
+                <?php
+                // Condición para mostrar la opción de "Add Product" solo si el usuario tiene un rol específico (por ejemplo, admin).
+                if ($rolUsuario == 'Administrador') {
+                    echo '<li><a href="./view/adminDashboard.php">Ghrapics</a></li>';
+                }
+                ?>
+                   <!-- <a href="./view/adminDashboard.php">Ghrapics</a>-->
                 </li>
             </ul>
         </div>
@@ -267,14 +271,14 @@ $productos = $productModel->obtenerProductos();
         $(document).ready(function() {
             $('.add-to-cart-button').on('click', function() {
                 var productId = $(this).data('product-id');
-                var userId = 1;
+                //var userId = 1;
                 var cantidad = 1;
                 var fechaActualizacion = fechaActual();
 
 
                 // Realiza una solicitud al servidor para agregar el producto al carrito
                 var requestData = {
-                    idUsuario: userId,
+                    //idUsuario: userId,
                     idProducto: productId, // Cambiando idProducto a product_id
                     cantidad: cantidad,
                     fechaAgregado: fechaActualizacion
@@ -351,7 +355,6 @@ $productos = $productModel->obtenerProductos();
             </div>
         </div>
     </div>
-
 
 </body>
 

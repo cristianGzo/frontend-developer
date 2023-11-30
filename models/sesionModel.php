@@ -2,16 +2,12 @@
 class SesionModel
 {
     private $conexion;
-
-    public function __construct()
-    {
+    public function __construct(){
         $conexion = new Conexion();
         $this->conexion = $conexion->conectar();
     }
 
-    
-    public function obtenerSesion()  
-{
+    public function obtenerSesion()  {
     //echo "Método obtenerSesion() se ha invocado.<br>";
     if(isset($_POST['email']) && isset($_POST['password'])){
         $usuario = $_POST['email'];
@@ -49,6 +45,5 @@ class SesionModel
         return false;
     }
 }
-
 }
 ?>

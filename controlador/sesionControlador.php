@@ -5,7 +5,6 @@ require_once '../models/conexion.php';
 // Habilitar el reporte de todos los errores para depuración
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-//echo "Se ha llegado a este punto del script.<br>";
 
 if (isset($_GET['opc'])) {
     $sesion = new SesionModel();
@@ -16,7 +15,6 @@ if (isset($_GET['opc'])) {
         case 1:
             
             //var_dump($usuario); // Verificar lo que devuelve el método obtenerSesion
-            //echo "Se intentó obtener la sesión.<br>";
             //intentar sesion desde el modelo y en el controlador simplemente recibir un true.
 
             if ($usuario = $sesion->obtenerSesion()) {
@@ -25,6 +23,7 @@ if (isset($_GET['opc'])) {
                 $_SESSION['idUsuario'] = $usuario['idUsuario'];
                 $_SESSION['nombre'] = $usuario['nombre'];
                 $_SESSION['email'] = $usuario['email'];
+                $_SESSION['rol'] = $usuario['rol'];
                 /* var_dump($_SESSION);
                 header('Location: ../cards.php');*/
                 //echo "entro al if";
@@ -53,6 +52,4 @@ if (isset($_GET['opc'])) {
     header('Location: ../login.php');
     exit();
 }
-
-//echo "Fin del script.<br>";
 ?>

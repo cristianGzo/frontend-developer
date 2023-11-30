@@ -11,19 +11,20 @@ class vDetalleModel
 
 
 
-    public function crearVDetalle()
-    {
+    public function crearVDetalle(){
         $idVenta = $_POST['idVenta'];
         $idProducto = $_POST['idProducto'];
         $cantidad = $_POST['cantidad'];
         $total = $_POST['total'];
+        $idPaypal= $_POST['idPaypal'];
         
         try {
-            $stmt = $this->conexion->prepare("INSERT INTO detalleventa (idVenta, idProducto, cantidad, total) VALUES (:idVenta, :idProducto, :cantidad, :total);");
+            $stmt = $this->conexion->prepare("INSERT INTO detalleventa (idVenta, idProducto, cantidad, total, idPaypal) VALUES (:idVenta, :idProducto, :cantidad, :total, :idPaypal);");
             $stmt->bindParam(':idVenta', $idVenta);
             $stmt->bindParam(':idProducto', $idProducto);
             $stmt->bindParam(':cantidad', $cantidad);
             $stmt->bindParam(':total', $total);
+            $stmt->bindParam(':idPaypal', $idPaypal);
             echo "Consulta SQL: " . $stmt->queryString;
             //return $this->conexion->lastInsertId(); // Retorna el ID del nuevo producto
             if ($stmt->execute()) {

@@ -1,14 +1,17 @@
 <?php
 include '../models/conexion.php';
 include '../models/VentaModel.php';
+include '../models/CarritoModel.php';
 
 $conexion = new Conexion();
 $conn = $conexion->conectar();
 $ventaModel = new VentaModel();
+$carritoModel = new CarritoModel();
+$idPaypalGlobal = '';
 
 $ventas = $ventaModel->obtenerVenta();
-
-$precioVenta = $ventaModel->costoCarrito();
+//$precioVenta = $ventaModel->costoCarrito();
+$precioVenta = $carritoModel->costoCarrito();
 
 ?>
 <!DOCTYPE html>
@@ -21,6 +24,8 @@ $precioVenta = $ventaModel->costoCarrito();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://www.paypal.com/sdk/js?client-id=AUgI780GYylmQo6kn27m_iGjtRmtlKpq7F19NkwFQsKzuGLSL2or8bdgRgoBBWL7gzwYym4q1gbDXWbL&currency=MXN">
+    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Resumen de Venta</title>
     <style>
@@ -101,23 +106,29 @@ $precioVenta = $ventaModel->costoCarrito();
         }
     </script>
     <script>
-        function crearVD(idV, idP, cantidad, precio) {
+        function crearVD(idV, idP, cantidad, precio, idPaypal) {
             $.ajax({
                 type: "POST",
                 data: {
                     idVenta: idV,
                     idProducto: idP,
                     cantidad: cantidad,
-                    total: precio
+                    total: precio,
+                    idPaypal: idPaypal
                 },
                 url: "../controlador/VDetalleControlador.php?opc=1",
                 success: function(data) {
                     console.log(data);
                     console.log("Creadas");
-                }
+                },
+                error: function(xhr, status, error) {
+            console.log("Error en la solicitud AJAX");
+            console.log(xhr.responseText);
+            // Manejar el error de acuerdo a tus necesidades
+        }
             });
         }
-        $(document).ready(function() {});
+        //$(document).ready(function() {});
     </script>
     <script>
         function correo() {
@@ -133,51 +144,117 @@ $precioVenta = $ventaModel->costoCarrito();
         }
         $(document).ready(function() {});
     </script>
-    <?php
+    <?php /*
     foreach ($ventas as $venta) {
         echo '<script>';
         echo 'crearVD(' . $venta['ID'] . ', ' . $venta['IDP'] . ', ' . $venta['Cantidad'] . ', ' . $venta['Precio_Producto'] . ');';
         echo '</script>';
-    }
+    }*/
     ?>
+    <script>
+            function procederAlPago(idPaypal) {
+                // Lógica adicional, como llamar a la función 'correo()'
+                //correo();
+
+                <?php foreach ($ventas as $venta) : ?>
+                    var idVenta = <?php echo $venta['ID']; ?>;
+                    var idProducto = <?php echo $venta['IDP']; ?>;
+                    var cantidad = <?php echo $venta['Cantidad']; ?>;
+                    var precio = <?php echo $venta['Precio_Producto']; ?>;
+
+                    // Llamar a la función crearVD con los parámetros correctos
+                    crearVD(idVenta, idProducto, cantidad, precio, idPaypal);
+                <?php endforeach; ?>
+
+            }
+        </script>
 </head>
 
 <body>
     <!--<form id="formProcederPago" method="post">-->
-        <div class="resumen-container">
-            <h1>Resumen de Venta</h1>
-            <?php
-            $numeroDeOrdenImpreso = false;
-            $usuarioImpreso = false;
-            foreach ($ventas as $venta) {
+    <div class="resumen-container">
+        <h1>Resumen de Venta</h1>
+        <?php
+        $numeroDeOrdenImpreso = false;
+        $usuarioImpreso = false;
+        foreach ($ventas as $venta) {
 
-                if (!$numeroDeOrdenImpreso) {
-                    echo '<div class="resumen-item">';
-                    echo '<p>Numero de orden:</p>';
-                    echo '<p>' . $venta['ID'] . '</p>';
-                    echo '</div>';
-                    $numeroDeOrdenImpreso = true; // Marca que se ha impreso
-                }
-
-                // Verifica si el usuario aún no se ha impreso
-                if (!$usuarioImpreso) {
-                    echo '<div class="resumen-item">';
-                    echo '<p>Usuario:</p>';
-                    echo '<p>' . $venta['usuario'] . '</p>';
-                    echo '</div>';
-                    echo '<p>Productos:</p>';
-                    $usuarioImpreso = true; // Marca que se ha impreso
-                }
-
+            if (!$numeroDeOrdenImpreso) {
                 echo '<div class="resumen-item">';
-                echo '<p>' . $venta['Cantidad'] . ' ' . $venta['producto'] . ' Precio unitario: $' . $venta['Precio_Producto'] . '</p>';
-                echo '<p>Importe: $' . $venta['costo'] . '</p>';
+                echo '<p>Numero de orden:</p>';
+                echo '<p>' . $venta['ID'] . '</p>';
                 echo '</div>';
-            } ?>
-            <p class="total">Total a pagar: $ <?php echo $precioVenta[0]['total_a_pagar']; ?></p>
-            <button class="checkout-button" onclick="correo()">Proceder al Pago</button>
-        </div>
+                $numeroDeOrdenImpreso = true; // Marca que se ha impreso
+            }
+
+            // Verifica si el usuario aún no se ha impreso
+            if (!$usuarioImpreso) {
+                echo '<div class="resumen-item">';
+                echo '<p>Usuario:</p>';
+                echo '<p>' . $venta['usuario'] . '</p>';
+                echo '</div>';
+                echo '<p>Productos:</p>';
+                $usuarioImpreso = true; // Marca que se ha impreso
+            }
+
+            echo '<div class="resumen-item">';
+            echo '<p>' . $venta['Cantidad'] . ' ' . $venta['producto'] . ' Precio unitario: $' . $venta['Precio_Producto'] . '</p>';
+            echo '<p>Importe: $' . $venta['costo'] . '</p>';
+            echo '</div>';
+        } ?>
+        <p class="total">Total a pagar: $ <?php echo $precioVenta[0]['total_a_pagar']; ?></p>
+        <!--<button class="checkout-button" onclick="procederAlPago()">Proceder al Pago</button>-->
+        <div id="paypal-button-container"></div>
+        
+    </div>
     <!--</form>-->
 </body>
+<script>
+    var idPaypalGlobal;
+    paypal.Buttons({
+        style: {
+            color: 'blue',
+            shape: 'pill',
+            label: 'pay'
+        },
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: <?php echo $precioVenta[0]['total_a_pagar']; ?> // Make sure to use a string for the value
+                    }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            actions.order.capture().then(function(details) {
+                // Extract values from the details object
+                var purchaseUnit = details.purchase_units[0];
+                var amount = purchaseUnit.amount.value;
+                var currencyCode = purchaseUnit.amount.currency_code;
+                var estado = details.status;
+                // Log or use the extracted values
+                var id = details.id;
+                console.log(details);
+                console.log("Amount:", amount);
+                console.log("Currency Code:", currencyCode);
+                console.log("estado:", estado);
+                console.log('id', id);
+
+                idPaypalGlobal = id;
+                correo();
+                procederAlPago(details.id);
+
+
+            });
+        },
+        // Payment canceled
+        
+        onCancel: function(data) {
+            alert('Payment canceled');
+            console.log(data);
+        }
+    }).render('#paypal-button-container');
+</script>
 
 </html>
