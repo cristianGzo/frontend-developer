@@ -171,6 +171,62 @@
         button:hover {
             background-color: #45a049;
         }
+
+
+
+
+        #modalEliminarCategoria {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-contentCat {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .closeCat {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .closeCat:hover,
+        .closeCat:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #listaCategorias {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
     </style>
     <title>Document</title>
 
@@ -235,6 +291,31 @@
                 }
             });
         }
+        function cargarListaCategoria(callback) {
+            $.ajax({
+                type: 'POST',
+                url: '../controlador/categoriaControlador.php?opc=1',
+                success: function(data) {
+                    console.log(data);
+                    var listaProductos = $('#listaCategorias');
+                    listaProductos.empty(); // Limpia la lista antes de agregar nuevos elementos
+
+                    var categorias = JSON.parse(data);
+
+                    categorias.forEach(function(categoria) {
+                        // Crea una opción con el valor del id y muestra el nombre y la descripción
+                        listaProductos.append('<option value="' + categoria.idCategoria + '">' + categoria.nombre +'</option>');
+                    });
+                    if (typeof callback === 'function') {
+                    callback();
+                }
+                },
+                error: function(error) {
+                    console.error(error);
+                    alert('Ocurrió un error al obtener la lista de categorias.');
+                }
+            });
+        }
 
         function abrirEliminarProductoModal() {
             cargarListaProductos(function(){
@@ -243,6 +324,14 @@
         }
         function cerrarModalEliminarProducto() {
             document.getElementById('modalEliminarProducto').style.display = 'none';
+        }
+        function abrirEliminarCategoriaModal() {
+            cargarListaCategoria(function(){
+            document.getElementById('modalEliminarCategoria').style.display = 'block';
+            });
+        }
+        function cerrarModalEliminarCategoria() {
+            document.getElementById('modalEliminarCategoria').style.display = 'none';
         }
 
         function eliminarProductoSeleccionado() {
@@ -271,6 +360,32 @@
                 }
             });
         }
+        function eliminarCategoriaSeleccionado() {
+            var idProductoSeleccionado = $('#listaCategorias').val();
+            console.log(idProductoSeleccionado);
+            // Validar que se haya seleccionado un producto
+            if (!idProductoSeleccionado) {
+                alert('Por favor, selecciona una categoria.');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '../controlador/categoriaControlador.php?opc=4', 
+                data: {
+                    idCategoria: idProductoSeleccionado
+                },
+                success: function(response) {
+                    console.log(response);
+                    alert('Categoria eliminada exitosamente.');
+                    cerrarModalEliminarCategoria();
+                },
+                error: function(error) {
+                    console.error(error);
+                    alert('Ocurrió un error al eliminar el producto.');
+                }
+            });
+        }
     </script>
 </head>
 
@@ -283,7 +398,7 @@
             <li><a href="#" onclick="abrirEliminarProductoModal()"><i class="fas fa-trash-alt icon"></i>Delete Product</a></li>
             <li><a href="#"><i class="fas fa-pencil-alt icon"></i>Edit Product</a></li>
             <li><a href="javascript:void(0);" onclick="abrirModal()"><i class="fas fa-plus icon"></i>Add category</a></li>
-            <li><a href="#"><i class="fas fa-trash-alt icon"></i>Delete category</a></li>
+            <li><a href="#" onclick="abrirEliminarCategoriaModal()"><i class="fas fa-trash-alt icon"></i>Delete category</a></li>
 
         </ul>
     </div>
@@ -412,6 +527,15 @@
             <label for="listaProductos">Selecciona un producto:</label>
             <select id="listaProductos"></select>
             <button onclick="eliminarProductoSeleccionado()">Eliminar Producto</button>
+        </div>
+    </div>
+
+    <div id="modalEliminarCategoria" class="modalCat">
+        <div class="modal-contentCat">
+            <span class="closeCat" onclick="cerrarModalEliminarCategoria()">&times;</span>
+            <label for="listaCategorias">Selecciona una categoria:</label>
+            <select id="listaCategorias"></select>
+            <button onclick="eliminarCategoriaSeleccionado()">Eliminar Producto</button>
         </div>
     </div>
 

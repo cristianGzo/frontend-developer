@@ -28,7 +28,7 @@ class CategoriaModel{
     }
     public function obtenerCategoria() {
         try {
-            $stmt = $this->conexion->prepare("SELECT idCategoria, nombre FROM categoria");
+            $stmt = $this->conexion->prepare("SELECT idCategoria, nombre FROM categoria WHERE `activo` = TRUE");
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -87,6 +87,16 @@ class CategoriaModel{
             }
         } catch (PDOException $e) {
             die("Error al eliminar producto: " . $e->getMessage());
+        }
+    }
+    public function desactivarCategoria() {
+        $idCategoria=$_POST['idCategoria'];
+        try {
+            $stmt = $this->conexion->prepare("UPDATE categoria SET `activo` = FALSE WHERE idCategoria = :idCategoria");
+            $stmt->bindParam(':idCategoria', $idCategoria);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            die("Error al eliminar categoria: " . $e->getMessage());
         }
     }
 }

@@ -17,6 +17,9 @@ if(isset($_GET['opc'])){
             break;
         case 3:
             $cat->crearCategoria();
+            break;
+        case 4:
+            $cat->desactivarCategoria();
     }
 }else{
     header('Location: ../index.html');
