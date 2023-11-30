@@ -210,10 +210,6 @@
             });
         }
 
-
-
-
-
         function cargarListaProductos(callback) {
             $.ajax({
                 type: 'POST',
