@@ -10,14 +10,10 @@ class CategoriaModel{
     
 
     public function crearCategoria() {
-        $idUsuario=$_POST['idUsuario']; 
-        $fecha= $_POST['fecha'];
-        $total=$_POST['total']; 
+        $nombre=$_POST['nombre']; 
         try {
-            $stmt = $this->conexion->prepare("INSERT INTO venta (idUsuario, fecha, total) VALUES (:idUsuario, :fecha, :total);");
-            $stmt->bindParam(':idUsuario', $idUsuario);
-            $stmt->bindParam(':fecha', $fecha);
-            $stmt->bindParam(':total', $total);
+            $stmt = $this->conexion->prepare("INSERT INTO categoria (nombre) VALUES (:nombre);");
+            $stmt->bindParam(':nombre', $nombre);
             echo "Consulta SQL: " . $stmt->queryString;
             //return $this->conexion->lastInsertId(); // Retorna el ID del nuevo producto
             if ($stmt->execute()) {

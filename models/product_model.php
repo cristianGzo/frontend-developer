@@ -60,10 +60,11 @@ class ProductModel{
         }
     }
 
-    public function eliminarProducto($id) {
+    public function eliminarProducto() {
+        $idProducto=$_POST['idProducto'];
         try {
-            $stmt = $this->conexion->prepare("DELETE FROM producto WHERE idProducto = :id");
-            $stmt->bindParam(':id', $id);
+            $stmt = $this->conexion->prepare("DELETE FROM producto WHERE idProducto = :idProducto");
+            $stmt->bindParam(':idProducto', $idProducto);
             $stmt->execute();
         } catch (PDOException $e) {
             die("Error al eliminar producto: " . $e->getMessage());

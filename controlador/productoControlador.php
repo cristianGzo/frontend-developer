@@ -20,6 +20,14 @@ if(isset($_GET['opc'])){
                 echo '<option>' . $item['imagen'] . '</option>';
                 echo '</select>';
             }
+            break;
+            case 3:
+                $productos=$producto->obtenerProductos();
+                echo json_encode($productos);  
+            break;
+            case 4:
+                    $producto->eliminarProducto();
+                    
         }
     }else{
         header('Location: ../index.html');

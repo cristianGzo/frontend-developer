@@ -71,15 +71,211 @@
             /* Ajusta según tus necesidades */
             margin-left: 320px;
             /* Ajusta según tus necesidades */
-          
+
         }
 
 
         .icon {
             margin-right: 10px;
         }
+
+        #modalAgregarCategoria {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+
+
+
+        #modalEliminarProducto {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-contents {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .closes {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .closes:hover,
+        .closes:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #listaProductos {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
     </style>
     <title>Document</title>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalAgregarCategoria').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalAgregarCategoria').style.display = 'none';
+        }
+
+        function agregarCategoria() {
+            var nombreCategoria = document.getElementById('nombreCategoria').value;
+            // Validar que el nombre de la categoría no esté vacío
+            if (nombreCategoria.trim() === '') {
+                alert('Por favor, ingresa un nombre para la categoría.');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '../controlador/categoriaControlador.php?opc=3',
+                data: {
+                    nombre: nombreCategoria
+                },
+                success: function(response) {
+                    console.log(response);
+                    alert('Categoría agregada exitosamente.');
+                    cerrarModal();
+                },
+                error: function(error) {
+                    console.error(error);
+                    // Aquí puedes manejar el caso de error
+                    alert('Ocurrió un error al agregar la categoría.');
+                }
+            });
+        }
+
+
+
+
+
+        function cargarListaProductos(callback) {
+            $.ajax({
+                type: 'POST',
+                url: '../controlador/ProductoControlador.php?opc=3',
+                success: function(data) {
+                    console.log(data);
+                    var listaProductos = $('#listaProductos');
+                    listaProductos.empty(); // Limpia la lista antes de agregar nuevos elementos
+
+                    var productos = JSON.parse(data);
+
+                    productos.forEach(function(producto) {
+                        // Crea una opción con el valor del id y muestra el nombre y la descripción
+                        listaProductos.append('<option value="' + producto.idProducto + '">' + producto.nombre + ' - ' + producto.descripcion + ' - ' + producto.precio + '</option>');
+                    });
+                    if (typeof callback === 'function') {
+                    callback();
+                }
+                },
+                error: function(error) {
+                    console.error(error);
+                    alert('Ocurrió un error al obtener la lista de productos.');
+                }
+            });
+        }
+
+        function abrirEliminarProductoModal() {
+            cargarListaProductos(function(){
+            document.getElementById('modalEliminarProducto').style.display = 'block';
+            });
+        }
+        function cerrarModalEliminarProducto() {
+            document.getElementById('modalEliminarProducto').style.display = 'none';
+        }
+
+        function eliminarProductoSeleccionado() {
+            var idProductoSeleccionado = $('#listaProductos').val();
+            console.log(idProductoSeleccionado);
+            // Validar que se haya seleccionado un producto
+            if (!idProductoSeleccionado) {
+                alert('Por favor, selecciona un producto.');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '../controlador/productoControlador.php?opc=4', 
+                data: {
+                    idProducto: idProductoSeleccionado
+                },
+                success: function(response) {
+                    console.log(response);
+                    alert('Producto eliminado exitosamente.');
+                    cerrarModalEliminarProducto();
+                },
+                error: function(error) {
+                    console.error(error);
+                    alert('Ocurrió un error al eliminar el producto.');
+                }
+            });
+        }
+    </script>
 </head>
 
 <body>
@@ -88,9 +284,11 @@
         <ul>
             <li><a href="#"><i class="fas fa-chart-bar icon"></i>Dashboard</a></li>
             <li><a href="./newProduct.php"><i class="fas fa-plus icon"></i>Add Product</a></li>
-            <li><a href="#"><i class="fas fa-trash-alt icon"></i>Delete Product</a></li>
+            <li><a href="#" onclick="abrirEliminarProductoModal()"><i class="fas fa-trash-alt icon"></i>Delete Product</a></li>
             <li><a href="#"><i class="fas fa-pencil-alt icon"></i>Edit Product</a></li>
-            
+            <li><a href="javascript:void(0);" onclick="abrirModal()"><i class="fas fa-plus icon"></i>Add category</a></li>
+            <li><a href="#"><i class="fas fa-trash-alt icon"></i>Delete category</a></li>
+
         </ul>
     </div>
 
@@ -202,6 +400,25 @@
             });
         });
     </script>
+
+    <div id="modalAgregarCategoria" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <label for="nombreCategoria">Nombre de la categoría:</label>
+            <input type="text" id="nombreCategoria" required>
+            <button onclick="agregarCategoria()">Agregar Categoría</button>
+        </div>
+    </div>
+
+    <div id="modalEliminarProducto" class="modals">
+        <div class="modal-contents">
+            <span class="closes" onclick="cerrarModalEliminarProducto()">&times;</span>
+            <label for="listaProductos">Selecciona un producto:</label>
+            <select id="listaProductos"></select>
+            <button onclick="eliminarProductoSeleccionado()">Eliminar Producto</button>
+        </div>
+    </div>
+
 
 </body>
 
