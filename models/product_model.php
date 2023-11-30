@@ -48,12 +48,15 @@ class ProductModel{
         }
     }
 
-    public function actualizarProducto($id, $nombre, $precio) {
+    public function actualizarProducto() {
+        $idProducto=$_POST['idProducto'];
+        $descripcion=$_POST['descripcion'];
+        $precio=$_POST['precio'];
         try {
-            $stmt = $this->conexion->prepare("UPDATE producto SET nombre = :nombre, precio = :precio WHERE idProducto = :id");
-            $stmt->bindParam(':nombre', $nombre);
+            $stmt = $this->conexion->prepare("UPDATE producto SET descripcion = :descripcion, precio = :precio WHERE idProducto = :idProducto");
+            $stmt->bindParam(':descripcion', $descripcion);
             $stmt->bindParam(':precio', $precio);
-            $stmt->bindParam(':id', $id);
+            $stmt->bindParam(':idProducto', $idProducto);
             $stmt->execute();
         } catch (PDOException $e) {
             die("Error al actualizar producto: " . $e->getMessage());

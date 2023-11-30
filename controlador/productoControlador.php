@@ -27,6 +27,9 @@ if(isset($_GET['opc'])){
             break;
             case 4:
                     $producto->desactivarProducto();
+                break;
+            case 5:
+                    $producto->actualizarProducto();
                     
         }
     }else{
