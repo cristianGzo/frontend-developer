@@ -31,7 +31,7 @@ class ProductModel{
 
     public function obtenerProductos() {
         try {
-            $stmt = $this->conexion->prepare("SELECT * FROM producto");
+            $stmt = $this->conexion->prepare("SELECT * FROM producto WHERE `activo` = TRUE");
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -68,6 +68,16 @@ class ProductModel{
             $stmt->execute();
         } catch (PDOException $e) {
             die("Error al eliminar producto: " . $e->getMessage());
+        }
+    }
+    public function desactivarProducto() {
+        $idProducto=$_POST['idProducto'];
+        try {
+            $stmt = $this->conexion->prepare("UPDATE producto SET `activo` = FALSE WHERE idProducto = :idProducto");
+            $stmt->bindParam(':idProducto', $idProducto);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            die("Error al actualizar producto: " . $e->getMessage());
         }
     }
 

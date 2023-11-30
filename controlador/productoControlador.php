@@ -26,7 +26,7 @@ if(isset($_GET['opc'])){
                 echo json_encode($productos);  
             break;
             case 4:
-                    $producto->eliminarProducto();
+                    $producto->desactivarProducto();
                     
         }
     }else{
