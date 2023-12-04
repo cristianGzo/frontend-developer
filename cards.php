@@ -1,25 +1,26 @@
 <?php
 session_start();
-
-if (!isset($_SESSION['idUsuario'])) {
-    // Si no hay una sesión activa, redirigir al usuario a la página de inicio de sesión.
-    header("Location: login.php");
-    exit(); // el script se detniene después de redirigir al usuario.
-}
-$rolUsuario = $_SESSION['rol'];
+//var_dump($_SESSION);
+//if (!isset($_SESSION['idUsuario'])) {
+// Si no hay una sesión activa, redirigir al usuario a la página de inicio de sesión.
+//  header("Location: login.php");
+// exit(); // el script se detniene después de redirigir al usuario.
+//}
+$rolUsuario = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
 // Incluye la clase Conexion y ProductModel
 include './models/conexion.php';
 include './models/product_model.php';
 require './models/CarritoModel.php';
 
 $productModel = new ProductModel();
-
+//$rolUsuario = '';
 // Obtén los datos de productos desde la base de datos
 $productos = $productModel->obtenerProductos();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -195,41 +196,72 @@ $productos = $productModel->obtenerProductos();
                     <a href="/">Furnitures</a>
                 </li>
                 <li>
-                <?php
-                // Condición para mostrar la opción de "Add Product" solo si el usuario tiene un rol específico (por ejemplo, admin).
-                if ($rolUsuario == 'Administrador') {
-                    echo '<li><a href="./view/adminDashboard.php">Ghrapics</a></li>';
-                }
-                ?>
-                   <!-- <a href="./view/adminDashboard.php">Ghrapics</a>-->
+                    <?php
+                    // Condición para mostrar la opción de "Add Product" solo si el usuario tiene un rol específico (por ejemplo, admin).
+                    if ($rolUsuario == 'Administrador') {
+                        echo '<li><a href="./view/adminDashboard.php">Ghrapics</a></li>';
+                    }
+                    ?>
+                    <!-- <a href="./view/adminDashboard.php">Ghrapics</a>-->
                 </li>
             </ul>
         </div>
-        <div class="navbar-right" id="menu-container">
-            <ul>
-                <li class="nav-profile">
-                    <img src="./images/perfil.png" alt="Profile">
-                    <div class="dropdown-content">
-                        <p><?php echo $_SESSION['nombre']; ?></p>
-                        <p><?php echo $_SESSION['email']; ?></p>
-                        <div>
-                        <p>
-                        <a href="./view/historialView.html" class="estilo">Tus compras</a>
-                        </p>
-                        <p><a href="#" onclick="logout();" class="estilo">Cerrar sesión</a></p>
-                        </div>
-                    </div>
-                </li>
-                <li class="nav-email"><?php echo $_SESSION['email']; ?></li>
 
-                <li class="navbar-cart">
-                    <a href="./shopping-cart.php" class="cart-link">
-                        <img src="./icons/icon_shopping_cart.svg" alt="">
-                    </a>
+        <?php
+        // Verificar si el usuario tiene la sesión
+        if (isset($_SESSION['rol'])) {
+            $rolUsuario = $_SESSION['rol'];
+            //if ($_SESSION['rol'] === 'Administrador') {
+        ?>
+
+            <div class="navbar-right" id="menu-container">
+                <ul>
+                    <li class="nav-profile">
+                        <img src="./images/perfil.png" alt="Profile">
+                        <div class="dropdown-content">
+                            <p><?php echo $_SESSION['nombre']; ?></p>
+                            <p><?php echo $_SESSION['email']; ?></p>
+                            <div>
+                                <p>
+                                    <a href="./view/historialView.html" class="estilo">Tus compras</a>
+                                </p>
+                                <p><a href="#" onclick="logout();" class="estilo">Cerrar sesión</a></p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-email"><?php echo $_SESSION['email']; ?></li>
+
+                    <li class="navbar-cart">
+                        <a href="./shopping-cart.php" class="cart-link">
+                            <img src="./icons/icon_shopping_cart.svg" alt="">
+                        </a>
+                    </li>
+                    <div>2</div>
+                </ul>
+            </div>
+        <?php
+            //}
+        } else {
+            ?>
+            <div class="navbar-right" id="menu-container">
+            <ul>
+                <li>
+                    <a href="./login.php" >Iniciar Sesión</a>
                 </li>
-                <div>2</div>
+                <li>
+                    <a href="./createAccount.html">Registrarse</a>
+                </li>
+                <li class="navbar-cart">
+                        <a href="./login.php" class="cart-link">
+                            <img src="./icons/icon_shopping_cart.svg" alt="">
+                        </a>
+                    </li>
             </ul>
         </div>
+
+        <?php
+            }
+        ?>
     </nav>
     <section class="main-container">
         <div class="cards-container">

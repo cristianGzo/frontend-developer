@@ -1,3 +1,14 @@
+<?php
+session_start();
+
+// Verificar si el usuario tiene la sesión y si tiene el rol de administrador
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
+    // Si no tiene el rol de administrador, redirigir a una página de error
+    echo 'Sin permisos suficientes';
+    header("Location: ../cards.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,9 +41,7 @@
 
 
         #graficoForm {
-
             padding: 20px;
-
             margin-left: 320px;
         }
 
@@ -268,12 +277,12 @@
         }
 
         /* Estilo para campos de entrada y etiquetas en el modal */
-        label {
+        .etiqueta {
             margin-bottom: 10px;
             display: block;
         }
 
-        input {
+        .caja {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -530,7 +539,7 @@
             var nuevaDescripcion = $('#descripcionProducto').val();
             var nuevoPrecio = $('#precioProducto').val();
             console.log(idProductoSeleccionado);
-            
+
             // Validar que se haya seleccionado un producto
             if (!idProductoSeleccionado) {
                 alert('Por favor, selecciona un producto.');
@@ -566,6 +575,7 @@
 </head>
 
 <body>
+   
     <div id="sidebar">
         <h2>Dashboard</h2>
         <ul>
@@ -648,8 +658,8 @@
     <div id="modalAgregarCategoria" class="modal">
         <div class="modal-content">
             <span class="close" onclick="cerrarModal()">&times;</span>
-            <label for="nombreCategoria">Nombre de la categoría:</label>
-            <input type="text" id="nombreCategoria" required>
+            <label class="etiqueta" for="nombreCategoria">Nombre de la categoría:</label>
+            <input class="caja" type="text" id="nombreCategoria" required>
             <button onclick="agregarCategoria()">Agregar Categoría</button>
         </div>
     </div>
@@ -657,7 +667,7 @@
     <div id="modalEliminarProducto" class="modals">
         <div class="modal-contents">
             <span class="closes" onclick="cerrarModalEliminarProducto()">&times;</span>
-            <label for="listaProductos">Selecciona un producto:</label>
+            <label class="etiqueta" for="listaProductos">Selecciona un producto:</label>
             <select id="listaProductos"></select>
             <button onclick="eliminarProductoSeleccionado()">Eliminar Producto</button>
         </div>
@@ -666,7 +676,7 @@
     <div id="modalEliminarCategoria" class="modalCat">
         <div class="modal-contentCat">
             <span class="closeCat" onclick="cerrarModalEliminarCategoria()">&times;</span>
-            <label for="listaCategorias">Selecciona una categoria:</label>
+            <label class="etiqueta" for="listaCategorias">Selecciona una categoria:</label>
             <select id="listaCategorias"></select>
             <button onclick="eliminarCategoriaSeleccionado()">Eliminar Producto</button>
         </div>
@@ -675,13 +685,13 @@
     <div id="modalActualizarProducto" class="modala">
         <div class="modal-contenta">
             <span class="closea" onclick="cerrarModalActualizarProducto()">&times;</span>
-            <label for="listaProductosA">Selecciona un producto:</label>
+            <label class="etiqueta" for="listaProductosA">Selecciona un producto:</label>
             <select id="listaProductosA"></select>
             <!-- Agregar campos para descripcion y precio -->
-            <label for="descripcionProducto">Descripción:</label>
-            <input type="text" id="descripcionProducto">
-            <label for="precioProducto">Precio:</label>
-            <input type="text" id="precioProducto">
+            <label class="etiqueta" for="descripcionProducto">Descripción:</label>
+            <input class="caja" type="text" id="descripcionProducto">
+            <label class="etiqueta" for="precioProducto">Precio:</label>
+            <input class="caja" type="text" id="precioProducto">
             <button onclick="actualizarProductoSeleccionado()">Editar Producto</button>
         </div>
     </div>
