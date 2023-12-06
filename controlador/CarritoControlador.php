@@ -29,6 +29,9 @@ if(isset($_GET['opc'])){
             echo '<script>';
             echo 'document.getElementById("totalPrice").textContent = ' . $costoActualizado[0]['total_a_pagar'] . ';';
             echo '</script>';
+            break;
+        case 3:
+            $carrito->eliminarTodoCarrito();
     }
 }else{
     header('Location: ../index.html');

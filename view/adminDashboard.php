@@ -83,6 +83,22 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
 
         }
 
+        .logo-container {
+            text-align: left;
+            /* Alinea el logo a la derecha */
+            margin-bottom: 10px;
+            /* Ajusta el margen inferior según sea necesario */
+        }
+
+        .logo {
+            width: 100px;
+            /* Ajusta el ancho del logo según sea necesario */
+            height: auto;
+            /* Mantiene la proporción del logo */
+            /* Otros estilos según tus necesidades */
+        }
+
+
 
         .icon {
             margin-right: 10px;
@@ -575,8 +591,12 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
 </head>
 
 <body>
-   
+
     <div id="sidebar">
+        <div class="logo-container">
+        <a href="../cards.php">
+            <img src="../logos/Log.png" alt="logo" class="logo">
+        </div>
         <h2>Dashboard</h2>
         <ul>
             <li><a href="#"><i class="fas fa-chart-bar icon"></i>Dashboard</a></li>

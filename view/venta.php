@@ -167,6 +167,21 @@ $precioVenta = $carritoModel->costoCarrito();
                 <?php endforeach; ?>
 
             }
+            
+        </script>
+
+        <script>
+            function borrarContenidoCarrito(){
+                $.ajax({
+                type: "POST",
+                data: {},
+                url: "../controlador/CarritoControlador.php?opc=3",
+                success: function(data) {
+                    console.log(data);
+                    
+                }
+            });
+            }
         </script>
 </head>
 
@@ -241,15 +256,16 @@ $precioVenta = $carritoModel->costoCarrito();
                 console.log("estado:", estado);
                 console.log('id', id);
 
+                
+                procederAlPago(details.id);
                 idPaypalGlobal = id;
                 correo();
-                procederAlPago(details.id);
 
-
+                window.location.href = '../cards.php';
+                borrarContenidoCarrito();
             });
         },
         // Payment canceled
-        
         onCancel: function(data) {
             alert('Payment canceled');
             console.log(data);

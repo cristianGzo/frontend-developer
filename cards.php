@@ -1,20 +1,11 @@
 <?php
 session_start();
-//var_dump($_SESSION);
-//if (!isset($_SESSION['idUsuario'])) {
-// Si no hay una sesión activa, redirigir al usuario a la página de inicio de sesión.
-//  header("Location: login.php");
-// exit(); // el script se detniene después de redirigir al usuario.
-//}
 $rolUsuario = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
-// Incluye la clase Conexion y ProductModel
 include './models/conexion.php';
 include './models/product_model.php';
 require './models/CarritoModel.php';
 
 $productModel = new ProductModel();
-//$rolUsuario = '';
-// Obtén los datos de productos desde la base de datos
 $productos = $productModel->obtenerProductos();
 ?>
 
@@ -197,7 +188,7 @@ $productos = $productModel->obtenerProductos();
                 </li>
                 <li>
                     <?php
-                    // Condición para mostrar la opción de "Add Product" solo si el usuario tiene un rol específico (por ejemplo, admin).
+                    // Condición para mostrar la opción de "Add Product" solo si el usuario tiene un rol admin
                     if ($rolUsuario == 'Administrador') {
                         echo '<li><a href="./view/adminDashboard.php">Ghrapics</a></li>';
                     }
@@ -355,10 +346,10 @@ $productos = $productModel->obtenerProductos();
                 <h4 class="ft-text-title">Our Team</h4>
                 <div class="address-member">
                     <p class="member">
-                        <b>Director</b> :
+                        <b>Director: TECNM</b>
                     </p>
                     <p class="member">
-                        <b>Editor</b> :
+                        <b>Editor: Web</b> :
                     </p>
                     <p class="member">
                         <b>Reporter</b> :

@@ -144,6 +144,10 @@ $precioCarrito = $carritoModel->costoCarrito();
         success: function(data) {
           //aqui se puede decir que ya se elimino
           $('#my-order-content').html(data);
+          if ($('#my-order-content').find('.shopping-cart').length === 0) {
+            $('#totalPrice').text('0.00'); // o cualquier valor que desees
+            $('#order').hide(); // Oculta la sección de pedido
+          }
         },
         error: function(xhr, status, error) {
           // Manejar errores si la eliminación no fue exitosa
@@ -186,6 +190,10 @@ $precioCarrito = $carritoModel->costoCarrito();
           <img src="./icons/icon_close.png" alt="close" onclick="eliminar(<?php echo $item['idCarrito']; ?>)">
         </div>
       <?php } ?>
+      <?php if (empty($carrito)) { ?>
+        <p>El carrito está vacío.</p>
+      <?php } ?>
+
     </div>
     <!--
       <div class="shopping-cart">
@@ -197,7 +205,7 @@ $precioCarrito = $carritoModel->costoCarrito();
         <img src="./icons/icon_close.png" alt="close">
       </div>
       -->
-    <div class="order" id="order">
+    <div class="order" id="order" <?php echo empty($carrito) ? 'style="display: none;"' : ''; ?>>
       <p>
         <span>Total</span>
       </p>
