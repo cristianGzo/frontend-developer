@@ -20,6 +20,7 @@ if(isset($_GET['opc'])){
          break;
         case 2:
             $resul=$venta->obtenerId();
+            echo $resul;
             $mail = new PHPMailer(true);
 
             try {
@@ -38,6 +39,7 @@ if(isset($_GET['opc'])){
                 $mail->addAddress('cg9554212@gmail.com', '');
 
                 // Configurar cuerpo del correo
+                
                 $cuerpo = '';
                 if (!empty($resul)) {
                     foreach ($resul as $fila) {

@@ -1,9 +1,16 @@
 <?php
 require "./models/conexion.php";
+session_start();
+
+
+if (isset($_SESSION['idUsuario'])) {
+    header("Location: ./cards.php");
+    exit(); // Asegúrate de incluir exit() después de la redirección
+}
 if (isset($_GET['error']) && $_GET['error'] == 1) {
     echo "Login incorrecto. Por favor, intenta de nuevo.";
 }
-session_start();
+
 
 if (isset($_SESSION['idUsuario'])) {
     $idUsuario = $_SESSION['idUsuario'];

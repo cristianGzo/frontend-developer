@@ -1,4 +1,12 @@
 <?php
+session_start();
+
+// Verificar si el usuario tiene la sesión activa
+if (!isset($_SESSION['idUsuario'])) {
+    // Si no hay sesión activa, redirigir al usuario a la página de inicio de sesión
+    header("Location: ./login.php");
+    exit();
+}
 include './models/conexion.php';
 include './models/CarritoModel.php';
 

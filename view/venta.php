@@ -138,7 +138,7 @@ $precioVenta = $carritoModel->costoCarrito();
                 url: "../controlador/VDetalleControlador.php?opc=2",
                 success: function(data) {
                     console.log(data);
-                    alert("Se ha enviado el correo");
+                    
                     console.log("Correo enviado");
                 }
             });
@@ -156,8 +156,8 @@ $precioVenta = $carritoModel->costoCarrito();
             function procederAlPago(idPaypal) {
                 // Lógica adicional, como llamar a la función 'correo()'
                 //correo();
-
-                <?php foreach ($ventas as $venta) : ?>
+                <?php $ventasAc = $ventaModel->obtenerVenta();?>
+                <?php foreach ($ventasAc as $venta) : ?>
                     var idVenta = <?php echo $venta['ID']; ?>;
                     var idProducto = <?php echo $venta['IDP']; ?>;
                     var cantidad = <?php echo $venta['Cantidad']; ?>;
@@ -259,9 +259,10 @@ $precioVenta = $carritoModel->costoCarrito();
                 console.log('id', id);
                 
                 idPaypalGlobal = id;
+                correo();
                 
                 window.location.href = '../cards.php';
-                correo();
+                
                 borrarContenidoCarrito();
             });
         },
