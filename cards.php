@@ -308,6 +308,10 @@ $productos = $productModel->obtenerProductos();
                 $.post('./controlador/CarritoControlador.php?opc=1', requestData,
                     function(data) {
                         // Puedes manejar la respuesta del servidor aquí, por ejemplo, mostrar un mensaje de éxito.
+                        console.log(data);
+                        if(data==-1){
+                            
+                        }
                         alert('Product agregado al carrito' + requestData.fechaAgregado);
                     });
             });

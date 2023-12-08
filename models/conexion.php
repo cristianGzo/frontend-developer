@@ -1,7 +1,7 @@
 <?php
 class Conexion {
-    private $DBServer = '127.0.0.1';
-    private $DBUser = 'master'; 
+    private $DBServer = 'localhost';
+    private $DBUser = 'maters'; 
     private $DBPass = '1234'; 
     private $DBName = 'proyectoweb';
 

@@ -13,6 +13,7 @@ class CarritoModel
 
     public function crearCarrito()
     {
+
         //se agrega al carrito del usr logeado
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
@@ -25,27 +26,40 @@ class CarritoModel
             $fechaActualizacion = $_POST['fechaAgregado'];
 
             try {
-                $stmt = $this->conexion->prepare("INSERT INTO carrito (idUsuario, idProducto, cantidad, fechaAgregado) VALUES (:idUsuario, :idProducto, :cantidad, :fechaAgregado)");
-                if ($stmt === false) {
-                    echo "Error en la preparación de la consulta.";
-                    return -1; // Otra indicación de error
-                }
-                $stmt->bindParam(':idUsuario', $idUsuario);
-                $stmt->bindParam(':idProducto', $idProducto);
-                $stmt->bindParam(':cantidad', $cantidad);
-                $stmt->bindParam(':fechaAgregado', $fechaActualizacion);
-                echo "Consulta SQL: " . $stmt->queryString;
+                $this->conexion->beginTransaction(); // Comienza una transacción
 
-                if ($stmt->execute()) {
+                // Verifica si hay suficiente stock
+                $stmtStock = $this->conexion->prepare("SELECT stock FROM producto WHERE idProducto = :idProducto");
+                $stmtStock->bindParam(':idProducto', $idProducto);
+                $stmtStock->execute();
+                $stockActual = $stmtStock->fetchColumn();
+
+                if ($stockActual >= $cantidad) {
+                    // Hay suficiente stock, procede con la inserción en la tabla carrito
+                    $stmtCarrito = $this->conexion->prepare("INSERT INTO carrito (idUsuario, idProducto, cantidad, fechaAgregado) VALUES (:idUsuario, :idProducto, :cantidad, :fechaAgregado)");
+                    $stmtCarrito->bindParam(':idUsuario', $idUsuario);
+                    $stmtCarrito->bindParam(':idProducto', $idProducto);
+                    $stmtCarrito->bindParam(':cantidad', $cantidad);
+                    $stmtCarrito->bindParam(':fechaAgregado', $fechaActualizacion);
+                    $stmtCarrito->execute();
+
+                    // Actualiza la tabla producto
+                    $stmtUpdateProducto = $this->conexion->prepare("UPDATE producto SET stock = stock - :cantidad, comprometidos = comprometidos + :cantidad WHERE idProducto = :idProducto");
+                    $stmtUpdateProducto->bindParam(':cantidad', $cantidad);
+                    $stmtUpdateProducto->bindParam(':idProducto', $idProducto);
+                    $stmtUpdateProducto->execute();
+
+                    $this->conexion->commit(); // Confirma la transacción
                     return $this->conexion->lastInsertId(); // Retorna el ID del nuevo producto
                 } else {
+                    $this->conexion->rollBack(); // Revierte la transacción si no hay suficiente stock
+                    echo -1;
                     return -1; // Otra indicación de error
                 }
             } catch (PDOException $e) {
+                $this->conexion->rollBack(); // Revierte la transacción en caso de error
                 die("Error al crear producto: " . $e->getMessage());
             }
-        } else {
-            return array();
         }
     }
 

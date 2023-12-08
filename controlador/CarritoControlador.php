@@ -9,7 +9,6 @@ if(isset($_GET['opc'])){
         case 1:
             //insert
             $carrito->crearCarrito();
-            echo 'insertado xxd';
             break;
         case 2:
             $eliminado=$carrito->eliminarDeCarrito();
