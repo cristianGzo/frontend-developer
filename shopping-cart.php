@@ -236,7 +236,7 @@ $precioCarrito = $carritoModel->costoCarrito();
         $.post('./controlador/ventaControlador.php?opc=1', requestData,
           function(data) {
             // Puedes manejar la respuesta del servidor aquí, por ejemplo, mostrar un mensaje de éxito.
-            alert('Carrito agregado a la venta');
+            //alert('Carrito agregado a la venta');
           });
       });
     });

@@ -4,7 +4,6 @@ session_start();
 // Verificar si el usuario tiene la sesión y si tiene el rol de administrador
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
     // Si no tiene el rol de administrador, redirigir a una página de error
-    echo 'Sin permisos suficientes';
     header("Location: ../cards.php");
     exit();
 }
@@ -16,10 +15,24 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
     <style>
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid;
+            margin-bottom: 0px;
+            background-color: #D6FFB7;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            z-index: 1;
+        }
+
         body {
             display: flex;
             flex-direction: column;
@@ -28,21 +41,29 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
             font-family: 'Arial', sans-serif;
         }
 
+        #container {
+            display: flex;
+        }
+
         #sidebar {
             width: 250px;
             height: 100vh;
             background-color: #ffffff;
             box-shadow: 5px 0px 5px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            z-index: 1;
-            position: fixed;
+            z-index: 2;
+            /*position: fixed;*/
 
         }
 
 
         #graficoForm {
             padding: 20px;
+            margin-top: 110px;
             margin-left: 320px;
+            flex-shrink: 0;
+            position: absolute;
+            top: 0;
         }
 
         #sidebar h2 {
@@ -79,6 +100,9 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
             max-width: 600px;
             /* Ajusta según tus necesidades */
             margin-left: 320px;
+            margin-top: 150px;
+            position: absolute;
+            top: 0;
             /* Ajusta según tus necesidades */
 
         }
@@ -93,6 +117,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
         .logo {
             width: 100px;
             /* Ajusta el ancho del logo según sea necesario */
+            padding-left: 60px;
             height: auto;
             /* Mantiene la proporción del logo */
             /* Otros estilos según tus necesidades */
@@ -318,6 +343,8 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
         button:hover {
             background-color: #45a049;
         }
+
+       
     </style>
     <title>Document</title>
 
@@ -591,12 +618,14 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
 </head>
 
 <body>
+    <nav class="navbar-left">
+        <div class="menu">
+            <a href="../cards.php">
+                <img src="../logos/Log.png" alt="logo" class="logo">
+        </div>
+    </nav>
 
     <div id="sidebar">
-        <div class="logo-container">
-        <a href="../cards.php">
-            <img src="../logos/Log.png" alt="logo" class="logo">
-        </div>
         <h2>Dashboard</h2>
         <ul>
             <li><a href="#"><i class="fas fa-chart-bar icon"></i>Dashboard</a></li>
@@ -610,16 +639,16 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
     </div>
 
     <!--<div id="content">-->
-    <form id="graficoForm">
-        <label for="fecha_inicio">Fecha de Inicio:</label>
-        <input type="date" name="fecha_inicio" required>
+        <form id="graficoForm">
+            <label for="fecha_inicio">Fecha de Inicio:</label>
+            <input type="date" name="fecha_inicio" required>
 
-        <label for="fecha_fin">Fecha de Fin:</label>
-        <input type="date" name="fecha_fin" required>
+            <label for="fecha_fin">Fecha de Fin:</label>
+            <input type="date" name="fecha_fin" required>
 
-        <input type="submit" value="Generar Gráfico">
-    </form>
-    <canvas id="myChart" width="400" height="200"></canvas>
+            <input type="submit" value="Generar Gráfico">
+        </form>
+        <canvas id="myChart" width="400" height="200"></canvas>
     <!--</div>-->
 
 

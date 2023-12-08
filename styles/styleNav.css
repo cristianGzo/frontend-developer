@@ -5,8 +5,16 @@ nav{
     border-bottom: 1px solid;
     margin-bottom: 30px;
     background-color: #D6FFB7;
+    /*
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    z-index: 1; */
 
 }
+
 .menu{
     display: none;
 }
@@ -79,6 +87,7 @@ nav{
 .navbar-cart div{
     position: relative;
 }
+
 @media (max-width: 640px){
     .menu{
         display: block;

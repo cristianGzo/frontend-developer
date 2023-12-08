@@ -11,10 +11,10 @@ if (isset($_GET['opc'])) {
             if( $reg->crearUsr()){
                 echo 1;
                 exit();
-            }else{
+            }/*else{
                 echo 2;
                 exit();
-            }
+            }*/
             //echo $usuario;
             //header('Location: pruea.html');
     }

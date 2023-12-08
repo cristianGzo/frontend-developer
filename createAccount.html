@@ -22,7 +22,38 @@
           url: "./controlador/registroControlador.php?opc=1",
           success: function (data) {
             console.log(data);
-            if (data == 1) {
+
+            if (data === "Captcha no valido") {
+              swal({
+                title: "Error",
+                text: "Error en CAPTCHA.",
+                icon: "error",
+                button: "OK",
+              });
+            } else if (data === "Todos los campos son obligatorios.") {
+              swal({
+                title: "Error",
+                text: "Todos los campos son obligatorios.",
+                icon: "error",
+                button: "OK",
+              });
+            } else if (data === "Formato de correo electrónico no válido.") {
+              swal({
+                title: "Error",
+                text: "Formato de correo electrónico no válido.",
+                icon: "error",
+                button: "OK",
+              });
+            } else if (
+              data === "La contraseña debe tener al menos 6 caracteres."
+            ) {
+              swal({
+                title: "Error",
+                text: "La contraseña debe tener al menos 6 caracteres.",
+                icon: "error",
+                button: "OK",
+              });
+            } else if (data == 1) {
               swal({
                 title: "¡Registro exitoso!",
                 text: "Tu cuenta ha sido creada.",
@@ -160,9 +191,10 @@
               placeholder="input your new password"
             />
           </div>
-          <div class="g-recaptcha" data-sitekey="6LdVHg0pAAAAAJOdT_oZa7TA30BqtgQKHSmMjhZb">
-            
-          </div>
+          <div
+            class="g-recaptcha"
+            data-sitekey="6LdVHg0pAAAAAJOdT_oZa7TA30BqtgQKHSmMjhZb"
+          ></div>
 
           <input type="submit" class="btn-edit" value="Register" />
         </form>

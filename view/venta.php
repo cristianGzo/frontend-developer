@@ -138,6 +138,7 @@ $precioVenta = $carritoModel->costoCarrito();
                 url: "../controlador/VDetalleControlador.php?opc=2",
                 success: function(data) {
                     console.log(data);
+                    alert("Se ha enviado el correo");
                     console.log("Correo enviado");
                 }
             });
@@ -250,18 +251,17 @@ $precioVenta = $carritoModel->costoCarrito();
                 var estado = details.status;
                 // Log or use the extracted values
                 var id = details.id;
+                procederAlPago(details.id);
                 console.log(details);
                 console.log("Amount:", amount);
                 console.log("Currency Code:", currencyCode);
                 console.log("estado:", estado);
                 console.log('id', id);
-
                 
-                procederAlPago(details.id);
                 idPaypalGlobal = id;
-                correo();
-
+                
                 window.location.href = '../cards.php';
+                correo();
                 borrarContenidoCarrito();
             });
         },

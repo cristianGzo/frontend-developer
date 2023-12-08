@@ -5,9 +5,9 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 
-require '../email/PHPMailer/src/PHPMailer.php';
-require '../email/PHPMailer/src/SMTP.php';
-require '../email/PHPMailer/src/Exception.php';
+//require_once '../email/PHPMailer/src/PHPMailer.php';
+//require_once '../email/PHPMailer/src/SMTP.php';
+//require_once '../email/PHPMailer/src/Exception.php';
 
 
 
@@ -27,6 +27,7 @@ try {
     $mail->setFrom('ab9621932@gmail.com','OnlineStore');
     $mail->addAddress('cg9554212@gmail.com','');//correo que va recibir el mensaje
     $cuerpo = '';
+
     if (!empty($resul)) {
     foreach ($resul as $fila) {
         $producto = $fila['Producto'];
@@ -41,6 +42,7 @@ try {
 } else {
     $cuerpo = '<p>No hay detalles de compra disponibles.</p>';
     }
+    
     $mail->isHTML(true);
     $mail->Subject = 'Detalle de compra';
     //$cuerpo= '<h4>Gracias por su compra</h4>';
