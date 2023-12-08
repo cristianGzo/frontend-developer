@@ -25,11 +25,12 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
             padding: 0 24px;
             border-bottom: 1px solid;
             margin-bottom: 0px;
+            margin-top: 20px;
             background-color: #D6FFB7;
-            top: 0;
+            /*top: 0;
             left: 0;
             width: 100%;
-            padding: 10px;
+            padding: 10px;*/
             z-index: 1;
         }
 

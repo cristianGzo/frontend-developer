@@ -62,6 +62,30 @@ class CarritoModel
             }
         }
     }
+    public function obtenerCantidadProductosEnCarrito()
+    {
+        // Carrito de usuario logeado
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (isset($_SESSION['idUsuario'])) {
+            $idUsuario = $_SESSION['idUsuario'];
+            
+            try {
+                $stmt = $this->conexion->prepare("SELECT SUM(cantidad) AS total FROM carrito WHERE idUsuario = :idUsuario");
+                $stmt->bindParam(':idUsuario', $idUsuario);
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                return isset($result['total']) ? $result['total'] : 0;
+            } catch (PDOException $e) {
+                die("Error al obtener la cantidad de productos en el carrito: " . $e->getMessage());
+            }
+        } else {
+            return 0;
+        }
+    }
 
     public function obtenerCarrito()
     {

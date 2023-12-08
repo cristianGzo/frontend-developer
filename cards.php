@@ -21,6 +21,8 @@ $productos = $productModel->obtenerProductos();
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles/styleNav.css">
     <link rel="stylesheet" href="./styles/foot.css">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
     <!--para el foot -->
 
     <hr>
@@ -38,6 +40,20 @@ $productos = $productModel->obtenerProductos();
             --md: 16px;
             --lg: 18px;
         }
+        #cart-count {
+    position: absolute;
+    top: 54px; /* Ajusta la posición vertical según sea necesario */
+    right: 13px; /* Ajusta la posición horizontal según sea necesario */
+    background-color: #ff0000; /* Color de fondo del círculo */
+    color: #ffffff; /* Color del texto (número) */
+    border-radius: 50%; /* Hace que el elemento sea un círculo */
+    width: 20px; /* Ajusta el tamaño según sea necesario */
+    height: 20px; /* Ajusta el tamaño según sea necesario */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px; /* Ajusta el tamaño del texto según sea necesario */
+}
 
         body {
             margin: 0;
@@ -167,7 +183,14 @@ $productos = $productModel->obtenerProductos();
 <body>
 
 
-
+<script>
+    $(document).ready(function() {
+    // Realiza la solicitud al cargar la página para obtener la cantidad de productos en el carrito
+    $.get('./controlador/CarritoControlador.php?opc=4', function(cantidad) {
+        $("#cart-count").text(cantidad);
+    });
+});
+</script>
     <nav>
         <img src="./icons/icon_menu.svg" alt="menu" class="menu">
         <div class="navbar-left">
@@ -227,31 +250,31 @@ $productos = $productModel->obtenerProductos();
                             <img src="./icons/icon_shopping_cart.svg" alt="">
                         </a>
                     </li>
-                    <div>2</div>
+                    <div id="cart-count">0</div>
                 </ul>
             </div>
         <?php
             //}
         } else {
-            ?>
+        ?>
             <div class="navbar-right" id="menu-container">
-            <ul>
-                <li>
-                    <a href="./login.php" >Iniciar Sesión</a>
-                </li>
-                <li>
-                    <a href="./createAccount.html">Registrarse</a>
-                </li>
-                <li class="navbar-cart">
+                <ul>
+                    <li>
+                        <a href="./login.php">Iniciar Sesión</a>
+                    </li>
+                    <li>
+                        <a href="./createAccount.html">Registrarse</a>
+                    </li>
+                    <li class="navbar-cart">
                         <a href="./login.php" class="cart-link">
                             <img src="./icons/icon_shopping_cart.svg" alt="">
                         </a>
                     </li>
-            </ul>
-        </div>
+                </ul>
+            </div>
 
         <?php
-            }
+        }
         ?>
     </nav>
     <section class="main-container">
@@ -309,10 +332,20 @@ $productos = $productModel->obtenerProductos();
                     function(data) {
                         // Puedes manejar la respuesta del servidor aquí, por ejemplo, mostrar un mensaje de éxito.
                         console.log(data);
-                        if(data==-1){
-                            
+                        if (data == -1) {
+                            swal({
+                                title: "Producto no disponible",
+                                text: "Lo sentimos, este producto no está disponible en este momento.",
+                                icon: "error",
+                                button: "OK",
+                            });
+                        } else {
+                            $.get('./controlador/CarritoControlador.php?opc=4', function(cantidad) {
+                                $("#cart-count").text(cantidad);
+                            });
+                            alert('Product agregado al carrito' + requestData.fechaAgregado);
                         }
-                        alert('Product agregado al carrito' + requestData.fechaAgregado);
+
                     });
             });
         });

@@ -31,6 +31,12 @@ if(isset($_GET['opc'])){
             break;
         case 3:
             $carrito->eliminarTodoCarrito();
+            break;
+        case 4:
+            $cantidadProductosEnCarrito = $carrito->obtenerCantidadProductosEnCarrito();
+            echo $cantidadProductosEnCarrito;
+            break;
+
     }
 }else{
     header('Location: ../index.html');
