@@ -224,7 +224,36 @@ class CarritoModel
         if (isset($_SESSION['idUsuario'])) {
             $idUsuario = $_SESSION['idUsuario'];
             try {
-                $stmt = $this->conexion->prepare("DELETE FROM carrito WHERE idUsuario = :idUsuario;");
+                $stmtSelect = $this->conexion->prepare("SELECT idProducto, cantidad FROM carrito WHERE idUsuario = :idUsuario");
+            $stmtSelect->bindParam(':idUsuario', $idUsuario);
+            $stmtSelect->execute();
+            $productosCarrito = $stmtSelect->fetchAll(PDO::FETCH_ASSOC);
+
+            // Paso 2: Actualizar los campos "comprometidos" en la tabla de productos
+            foreach ($productosCarrito as $producto) {
+                $idProducto = $producto['idProducto'];
+                $cantidad = $producto['cantidad'];
+                $this->actualizarComprometidos($idProducto, $cantidad);
+            }
+
+            // Paso 3: Eliminar los productos del carrito
+            $stmtDelete = $this->conexion->prepare("DELETE FROM carrito WHERE idUsuario = :idUsuario");
+            $stmtDelete->bindParam(':idUsuario', $idUsuario);
+
+            if ($stmtDelete->execute()) {
+                return "Operación exitosa";
+            } else {
+                return "Error al ejecutar la consulta de eliminación.";
+            }
+        } catch (PDOException $e) {
+            return "Error al eliminar producto: " . $e->getMessage();
+        }
+
+
+
+
+
+                /*$stmt = $this->conexion->prepare("DELETE FROM carrito WHERE idUsuario = :idUsuario;");
                 $stmt->bindParam(':idUsuario', $idUsuario);
                 if ($stmt === false) {
                     return "Error en la preparación de la consulta de eliminación.";
@@ -236,11 +265,27 @@ class CarritoModel
                 }
             } catch (PDOException $e) {
                 return "Error al eliminar producto: " . $e->getMessage();
-            }
+            }*/
         } else {
             return array();
         }
     }
+    private function actualizarComprometidos($idProducto, $cantidad)
+{
+    try {
+        $stmtUpdate = $this->conexion->prepare("UPDATE producto SET comprometidos = comprometidos - :cantidad WHERE idProducto = :idProducto");
+        $stmtUpdate->bindParam(':idProducto', $idProducto);
+        $stmtUpdate->bindParam(':cantidad', $cantidad);
+
+        if ($stmtUpdate->execute()) {
+            return "Actualización exitosa";
+        } else {
+            return "Error al ejecutar la actualización.";
+        }
+    } catch (PDOException $e) {
+        return "Error al actualizar comprometidos: " . $e->getMessage();
+    }
+}
 
     public function actualizarCantidadCarrito()
     {
@@ -275,7 +320,7 @@ class CarritoModel
                 $stmtUpdateCarrito->execute();
 
                 // Actualiza el stock y los comprometidos en la tabla de productos
-                $stmtUpdateProducto = $this->conexion->prepare("UPDATE producto SET stock = stock + :diferenciaCantidad, comprometidos = comprometidos - :diferenciaCantidad WHERE idProducto = :idProducto");
+                $stmtUpdateProducto = $this->conexion->prepare("UPDATE producto SET stock = stock - :diferenciaCantidad, comprometidos = comprometidos + :diferenciaCantidad WHERE idProducto = :idProducto");
                 $stmtUpdateProducto->bindParam(':diferenciaCantidad', $diferenciaCantidad);
                 $stmtUpdateProducto->bindParam(':idProducto', $carritoAntiguo['idProducto']);
                 $stmtUpdateProducto->execute();

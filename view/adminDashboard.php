@@ -123,17 +123,13 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
             /* Mantiene la proporción del logo */
             /* Otros estilos según tus necesidades */
         }
-
-
-
         .icon {
             margin-right: 10px;
         }
-
         #modalAgregarCategoria {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 3;
             left: 0;
             top: 0;
             width: 100%;
@@ -143,7 +139,6 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
             background-color: rgba(0, 0, 0, 0.4);
             padding-top: 60px;
         }
-
         .modal-content {
             background-color: #fefefe;
             margin: 5% auto;
@@ -173,7 +168,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
         #modalEliminarProducto {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 3;
             left: 0;
             top: 0;
             width: 100%;
@@ -229,7 +224,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
         #modalEliminarCategoria {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 3;
             left: 0;
             top: 0;
             width: 100%;
@@ -284,7 +279,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
         .modala {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 3;
             left: 0;
             top: 0;
             width: 100%;
@@ -728,7 +723,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
             <span class="closeCat" onclick="cerrarModalEliminarCategoria()">&times;</span>
             <label class="etiqueta" for="listaCategorias">Selecciona una categoria:</label>
             <select id="listaCategorias"></select>
-            <button onclick="eliminarCategoriaSeleccionado()">Eliminar Producto</button>
+            <button onclick="eliminarCategoriaSeleccionado()">Eliminar categoria</button>
         </div>
     </div>
 

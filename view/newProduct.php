@@ -142,7 +142,7 @@
                         idCategoria: idCategoria
                     },
                     success: function(idObtenido) {
-                        alert("ID de la categoría seleccionada: " + idObtenido);
+                        //alert("ID de la categoría seleccionada: " + idObtenido);
                         // Ahora puedes usar idObtenido para lo que necesites
                     }
                 });
@@ -152,7 +152,7 @@
                 // Obtén el valor seleccionado
                 var selectedOption = selectImagen.options[selectImagen.selectedIndex];
                 var imagen = selectedOption.value;
-                alert('la imagen es' + imagen);
+                //alert('la imagen es' + imagen);
 
             });
 
