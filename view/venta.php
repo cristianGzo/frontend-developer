@@ -126,8 +126,27 @@ $precioVenta = $carritoModel->costoCarrito();
                     console.log(xhr.responseText);
                     // Manejar el error de acuerdo a tus necesidades
                 }
-            });
+            });   
         }
+        function actualizarVenta(idV, idPaypal) {
+                $.ajax({
+                    type: "POST",
+                    data: {
+                        idVenta: idV,
+                        idPaypal: idPaypal
+                    },
+                    url: "../controlador/ventaControlador.php?opc=2",
+                    success: function(data) {
+                        console.log(data);
+                        console.log("ActualizadoV");
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Error en la solicitud AJAX");
+                        console.log(xhr.responseText);
+                        // Manejar el error de acuerdo a tus necesidades
+                    }
+                });
+            }
         //$(document).ready(function() {});
     </script>
 
@@ -143,17 +162,21 @@ $precioVenta = $carritoModel->costoCarrito();
             // Lógica adicional, como llamar a la función 'correo()'
             //correo();
             <?php $ventasAc = $ventaModel->obtenerVenta(); ?>
+            var idVenta;
             <?php foreach ($ventasAc as $ventaA) : ?>
-                var idVenta = <?php echo $ventaA['ID']; ?>;
+                idVenta = <?php echo $ventaA['ID']; ?>;
                 var idProducto = <?php echo $ventaA['IDP']; ?>;
                 var cantidad = <?php echo $ventaA['Cantidad']; ?>;
                 var precio = <?php echo $ventaA['Precio_Producto']; ?>;
 
                 // Llamar a la función crearVD con los parámetros correctos
                 crearVD(idVenta, idProducto, cantidad, precio, idPaypal);
+
                 console.log(idProducto);
                 console.log("Producto");
             <?php endforeach; ?>
+
+            actualizarVenta(idVenta, idPaypal);
         }
     </script>
 

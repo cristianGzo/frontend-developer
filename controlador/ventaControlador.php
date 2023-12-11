@@ -10,6 +10,12 @@ if(isset($_GET['opc'])){
             //insert
             $venta->crearVenta();
             echo 'insertado xxd';
+            break;
+        case 2:
+                //update
+                $venta->actualizarPaypalVenta();
+                echo 'Actualizado xxd';
+                break;
             
         }
     }else{
