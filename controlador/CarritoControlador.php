@@ -36,6 +36,11 @@ if(isset($_GET['opc'])){
             $cantidadProductosEnCarrito = $carrito->obtenerCantidadProductosEnCarrito();
             echo $cantidadProductosEnCarrito;
             break;
+        case 5:
+            $carrito->actualizarCantidadCarrito();
+            $costoAct = $carrito->costoCarrito();
+            echo "actualizado";
+            break;
 
     }
 }else{

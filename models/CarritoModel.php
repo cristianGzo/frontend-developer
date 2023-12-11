@@ -71,7 +71,7 @@ class CarritoModel
 
         if (isset($_SESSION['idUsuario'])) {
             $idUsuario = $_SESSION['idUsuario'];
-            
+
             try {
                 $stmt = $this->conexion->prepare("SELECT SUM(cantidad) AS total FROM carrito WHERE idUsuario = :idUsuario");
                 $stmt->bindParam(':idUsuario', $idUsuario);
@@ -100,6 +100,7 @@ class CarritoModel
             p.nombre AS nombre_producto,
             p.precio AS precio_producto,
             c.idCarrito as idCarrito,
+            p.idProducto as idProducto,
             SUM(c.cantidad) as cantidad,
             SUM(p.precio * c.cantidad) AS suma_precio,
             p.imagen AS imagen_producto
@@ -147,7 +148,7 @@ class CarritoModel
             return array();
         }
     }
-    public function eliminarDeCarrito()
+    /*public function eliminarDeCarrito()
     {
         $idCarrito = $_POST['idCarrito'];
         try {
@@ -168,7 +169,53 @@ class CarritoModel
         } catch (PDOException $e) {
             return "Error al eliminar producto: " . $e->getMessage();
         }
+    }*/
+    public function eliminarDeCarrito()
+    {
+        $idCarrito = $_POST['idCarrito'];
+        $idProducto = $_POST['idProducto'];
+
+        try {
+            $this->conexion->beginTransaction(); // Comienza una transacción
+
+            // Obtén la cantidad comprometida antes de eliminar el producto del carrito
+            $stmtCantidadComprometida = $this->conexion->prepare("SELECT cantidad FROM carrito WHERE idCarrito = :idCarrito");
+            $stmtCantidadComprometida->bindParam(':idCarrito', $idCarrito);
+            $stmtCantidadComprometida->execute();
+            $cantidadComprometida = $stmtCantidadComprometida->fetchColumn();
+
+            // Elimina el producto del carrito
+            $stmtEliminar = $this->conexion->prepare("DELETE FROM carrito WHERE idCarrito = :idCarrito;");
+            $stmtEliminar->bindParam(':idCarrito', $idCarrito);
+
+            if ($stmtEliminar === false) {
+                throw new Exception("Error en la preparación de la consulta de eliminación.");
+            }
+
+            if ($stmtEliminar->execute()) {
+                // Actualiza la tabla producto para devolver la cantidad comprometida al stock
+                $stmtUpdateProducto = $this->conexion->prepare("UPDATE producto SET stock = stock + :cantidadComprometida WHERE idProducto = :idProducto");
+                $stmtUpdateProducto->bindParam(':cantidadComprometida', $cantidadComprometida);
+                $stmtUpdateProducto->bindParam(':idProducto', $idProducto); // Asegúrate de obtener el idProducto
+                $stmtUpdateProducto->execute();
+
+                $stmtRestarCantidadComprometida = $this->conexion->prepare("UPDATE producto SET comprometidos = comprometidos - :cantidadComprometida WHERE idProducto = :idProducto");
+                $stmtRestarCantidadComprometida->bindParam(':cantidadComprometida', $cantidadComprometida);
+                $stmtRestarCantidadComprometida->bindParam(':idProducto', $idProducto);
+                $stmtRestarCantidadComprometida->execute();
+
+
+                $this->conexion->commit(); // Confirma la transacción
+                return "Operación exitosa";
+            } else {
+                throw new Exception("Error al ejecutar la consulta de eliminación.");
+            }
+        } catch (Exception $e) {
+            $this->conexion->rollBack(); // Revierte la transacción en caso de error
+            return "Error al eliminar producto: " . $e->getMessage();
+        }
     }
+
     public function eliminarTodoCarrito()
     {
         if (session_status() == PHP_SESSION_NONE) {
@@ -193,5 +240,55 @@ class CarritoModel
         } else {
             return array();
         }
+    }
+
+    public function actualizarCantidadCarrito()
+    {
+        $idCarrito = $_POST['idCarrito'];
+        $nuevaCantidad = $_POST['nuevaCantidad'];
+
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (isset($_SESSION['idUsuario'])) {
+            $idUsuario = $_SESSION['idUsuario'];
+
+            try {
+                $this->conexion->beginTransaction();
+
+                // Obtén información de carrito
+                $stmtCarrito = $this->conexion->prepare("SELECT * FROM carrito WHERE idCarrito = :idCarrito AND idUsuario = :idUsuario");
+                $stmtCarrito->bindParam(':idCarrito', $idCarrito);
+                $stmtCarrito->bindParam(':idUsuario', $idUsuario);
+                $stmtCarrito->execute();
+                $carritoAntiguo = $stmtCarrito->fetch(PDO::FETCH_ASSOC);
+
+                // Calcula la diferencia en la cantidad
+                $diferenciaCantidad = $nuevaCantidad - $carritoAntiguo['cantidad'];
+
+                // Actualiza la cantidad en el carrito
+                $stmtUpdateCarrito = $this->conexion->prepare("UPDATE carrito SET cantidad = :nuevaCantidad WHERE idCarrito = :idCarrito AND idUsuario = :idUsuario");
+                $stmtUpdateCarrito->bindParam(':nuevaCantidad', $nuevaCantidad);
+                $stmtUpdateCarrito->bindParam(':idCarrito', $idCarrito);
+                $stmtUpdateCarrito->bindParam(':idUsuario', $idUsuario);
+                $stmtUpdateCarrito->execute();
+
+                // Actualiza el stock y los comprometidos en la tabla de productos
+                $stmtUpdateProducto = $this->conexion->prepare("UPDATE producto SET stock = stock + :diferenciaCantidad, comprometidos = comprometidos - :diferenciaCantidad WHERE idProducto = :idProducto");
+                $stmtUpdateProducto->bindParam(':diferenciaCantidad', $diferenciaCantidad);
+                $stmtUpdateProducto->bindParam(':idProducto', $carritoAntiguo['idProducto']);
+                $stmtUpdateProducto->execute();
+
+                $this->conexion->commit();
+
+                return true; // La actualización fue exitosa
+            } catch (PDOException $e) {
+                $this->conexion->rollBack();
+                die("Error al actualizar cantidad en carrito: " . $e->getMessage());
+            }
+        }
+
+        return false; // No hay sesión de usuario
     }
 }

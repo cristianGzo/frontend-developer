@@ -122,13 +122,53 @@ $precioVenta = $carritoModel->costoCarrito();
                     console.log("Creadas");
                 },
                 error: function(xhr, status, error) {
-            console.log("Error en la solicitud AJAX");
-            console.log(xhr.responseText);
-            // Manejar el error de acuerdo a tus necesidades
-        }
+                    console.log("Error en la solicitud AJAX");
+                    console.log(xhr.responseText);
+                    // Manejar el error de acuerdo a tus necesidades
+                }
             });
         }
         //$(document).ready(function() {});
+    </script>
+
+    <?php /*
+    foreach ($ventas as $venta) {
+        echo '<script>';
+        echo 'crearVD(' . $venta['ID'] . ', ' . $venta['IDP'] . ', ' . $venta['Cantidad'] . ', ' . $venta['Precio_Producto'] . ');';
+        echo '</script>';
+    }*/
+    ?>
+    <script>
+        function procederAlPago(idPaypal) {
+            // Lógica adicional, como llamar a la función 'correo()'
+            //correo();
+            <?php $ventasAc = $ventaModel->obtenerVenta(); ?>
+            <?php foreach ($ventasAc as $ventaA) : ?>
+                var idVenta = <?php echo $ventaA['ID']; ?>;
+                var idProducto = <?php echo $ventaA['IDP']; ?>;
+                var cantidad = <?php echo $ventaA['Cantidad']; ?>;
+                var precio = <?php echo $ventaA['Precio_Producto']; ?>;
+
+                // Llamar a la función crearVD con los parámetros correctos
+                crearVD(idVenta, idProducto, cantidad, precio, idPaypal);
+                console.log(idProducto);
+                console.log("Producto");
+            <?php endforeach; ?>
+        }
+    </script>
+
+    <script>
+        function borrarContenidoCarrito() {
+            $.ajax({
+                type: "POST",
+                data: {},
+                url: "../controlador/CarritoControlador.php?opc=3",
+                success: function(data) {
+                    console.log(data);
+
+                }
+            });
+        }
     </script>
     <script>
         function correo() {
@@ -138,52 +178,13 @@ $precioVenta = $carritoModel->costoCarrito();
                 url: "../controlador/VDetalleControlador.php?opc=2",
                 success: function(data) {
                     console.log(data);
-                    
+
                     console.log("Correo enviado");
                 }
             });
         }
         $(document).ready(function() {});
     </script>
-    <?php /*
-    foreach ($ventas as $venta) {
-        echo '<script>';
-        echo 'crearVD(' . $venta['ID'] . ', ' . $venta['IDP'] . ', ' . $venta['Cantidad'] . ', ' . $venta['Precio_Producto'] . ');';
-        echo '</script>';
-    }*/
-    ?>
-    <script>
-            function procederAlPago(idPaypal) {
-                // Lógica adicional, como llamar a la función 'correo()'
-                //correo();
-                <?php $ventasAc = $ventaModel->obtenerVenta();?>
-                <?php foreach ($ventasAc as $venta) : ?>
-                    var idVenta = <?php echo $venta['ID']; ?>;
-                    var idProducto = <?php echo $venta['IDP']; ?>;
-                    var cantidad = <?php echo $venta['Cantidad']; ?>;
-                    var precio = <?php echo $venta['Precio_Producto']; ?>;
-
-                    // Llamar a la función crearVD con los parámetros correctos
-                    crearVD(idVenta, idProducto, cantidad, precio, idPaypal);
-                <?php endforeach; ?>
-
-            }
-            
-        </script>
-
-        <script>
-            function borrarContenidoCarrito(){
-                $.ajax({
-                type: "POST",
-                data: {},
-                url: "../controlador/CarritoControlador.php?opc=3",
-                success: function(data) {
-                    console.log(data);
-                    
-                }
-            });
-            }
-        </script>
 </head>
 
 <body>
@@ -221,7 +222,7 @@ $precioVenta = $carritoModel->costoCarrito();
         <p class="total">Total a pagar: $ <?php echo $precioVenta[0]['total_a_pagar']; ?></p>
         <!--<button class="checkout-button" onclick="procederAlPago()">Proceder al Pago</button>-->
         <div id="paypal-button-container"></div>
-        
+
     </div>
     <!--</form>-->
 </body>
@@ -257,12 +258,12 @@ $precioVenta = $carritoModel->costoCarrito();
                 console.log("Currency Code:", currencyCode);
                 console.log("estado:", estado);
                 console.log('id', id);
-                
+
                 idPaypalGlobal = id;
                 correo();
-                
+
                 window.location.href = '../cards.php';
-                
+
                 borrarContenidoCarrito();
             });
         },

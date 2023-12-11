@@ -22,9 +22,7 @@ $productos = $productModel->obtenerProductos();
     <link rel="stylesheet" href="./styles/styleNav.css">
     <link rel="stylesheet" href="./styles/foot.css">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
     <!--para el foot -->
-
     <hr>
     <!--ETILOS DEL FOOT-->
 
@@ -343,7 +341,6 @@ $productos = $productModel->obtenerProductos();
                             $.get('./controlador/CarritoControlador.php?opc=4', function(cantidad) {
                                 $("#cart-count").text(cantidad);
                             });
-                            alert('Product agregado al carrito' + requestData.fechaAgregado);
                         }
 
                     });

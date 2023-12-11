@@ -3,9 +3,9 @@ session_start();
 
 // Verificar si el usuario tiene la sesión activa
 if (!isset($_SESSION['idUsuario'])) {
-    // Si no hay sesión activa, redirigir al usuario a la página de inicio de sesión
-    header("Location: ./login.php");
-    exit();
+  // Si no hay sesión activa, redirigir al usuario a la página de inicio de sesión
+  header("Location: ./login.php");
+  exit();
 }
 include './models/conexion.php';
 include './models/CarritoModel.php';
@@ -16,6 +16,7 @@ $carritoModel = new CarritoModel();
 
 $carrito = $carritoModel->obtenerCarrito();
 $precioCarrito = $carritoModel->costoCarrito();
+$userId = $_SESSION['idUsuario'];
 ?>
 
 <!DOCTYPE html>
@@ -41,17 +42,60 @@ $precioCarrito = $carritoModel->costoCarrito();
       --lg: 18px;
     }
 
+    nav {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 24px;
+      border-bottom: 1px solid;
+      margin-bottom: 0px;
+      margin-top: 20px;
+      background-color: #D6FFB7;
+      z-index: 1;
+    }
+
+    .menu {
+      display: flex;
+      align-items: center;
+
+      /* Centra los elementos verticalmente */
+    }
+
+    .nav-title {
+      flex-grow: 1;
+      text-align: center;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      /* Centra los elementos verticalmente */
+      justify-content: center;
+    }
+
+    .logo {
+      width: 100px;
+      padding-left: 60px;
+      height: auto;
+    }
+
     body {
+      /*display: flex;
+      justify-content: center;
+      /*align-items: center;*/
+      height: 100vh;
       margin: 0;
       font-family: 'Quicksand', sans-serif;
     }
 
     .product-detail {
-      width: 360px;
+      /*width: 360px;*/
+
+      width: 80%;
       padding: 24px;
+      max-width: 600px;
       box-sizing: border-box;
-      position: absolute;
-      right: 0;
+      margin: 0 auto;
+      /*position: absolute;
+      margin-top: 130px;*/
+      /*right: 0;*/
     }
 
     .title-container {
@@ -142,14 +186,17 @@ $precioCarrito = $carritoModel->costoCarrito();
   </style>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    function eliminar(idCarrito) {
+    function eliminar(idCarrito, idProducto) {
       $.ajax({
         type: "POST",
         url: "./controlador/CarritoControlador.php?opc=2",
         data: {
-          idCarrito: idCarrito
+          idCarrito: idCarrito,
+          idProducto: idProducto
         },
         success: function(data) {
+
+          window.location.reload();
           //aqui se puede decir que ya se elimino
           $('#my-order-content').html(data);
           if ($('#my-order-content').find('.shopping-cart').length === 0) {
@@ -158,7 +205,6 @@ $precioCarrito = $carritoModel->costoCarrito();
           }
         },
         error: function(xhr, status, error) {
-          // Manejar errores si la eliminación no fue exitosa
           alert("Error al eliminar el producto: " + error);
         },
       })
@@ -173,9 +219,37 @@ $precioCarrito = $carritoModel->costoCarrito();
       });
     });
   </script>
+  <script>
+    function actualizarCantidad(idCarrito, nuevaCantidad) {
+      $.ajax({
+        type: "POST",
+        url: "./controlador/CarritoControlador.php?opc=5", // Supongamos que el código 3 es para actualizar la cantidad
+        data: {
+          idCarrito: idCarrito,
+          nuevaCantidad: nuevaCantidad
+        },
+        success: function(data) {
+          // Manejar la respuesta del servidor si es necesario
+          window.location.reload(); // Actualizar la página después de la actualización
+        },
+        error: function(xhr, status, error) {
+          alert("Error al actualizar la cantidad: " + error);
+        },
+      });
+    }
+  </script>
 </head>
 
 <body>
+  <nav class="navbar-left">
+    <h1 class="nav-title">Carrito de compras</h1>
+    <div class="menu">
+      <a href="./cards.php">
+        <img src="./logos/Log.png" alt="logo" class="logo">
+      </a>
+    </div>
+
+  </nav>
 
   <aside class="product-detail">
     <div class="title-container">
@@ -193,9 +267,12 @@ $precioCarrito = $carritoModel->costoCarrito();
           </figure>
           <p><?php echo $item['nombre_producto']; ?></p>
           <p><?php echo $item['suma_precio']; ?></p>
-          <p><?php echo $item['cantidad']; ?></p>
-          <!--<p>//?php echo $item['suma_precio']; ?></p>-->
-          <img src="./icons/icon_close.png" alt="close" onclick="eliminar(<?php echo $item['idCarrito']; ?>)">
+          <div class="shopping-cart-details">
+            <p>Calidad:<?php echo $item['cantidad']; ?></p>
+            <input type="number" id="cantidad-<?php echo $item['idCarrito']; ?>" value="<?php echo $item['cantidad']; ?>" onchange="actualizarCantidad(<?php echo $item['idCarrito']; ?>, this.value)">
+          
+          </div>
+          <img src="./icons/icon_close.png" alt="close" onclick="eliminar(<?php echo $item['idCarrito']; ?>, '<?php echo $item['idProducto']; ?>')">
         </div>
       <?php } ?>
       <?php if (empty($carrito)) { ?>
@@ -231,7 +308,7 @@ $precioCarrito = $carritoModel->costoCarrito();
   <script>
     $(document).ready(function() {
       $('.primary-button').on('click', function() {
-        var userId = 1;
+        var userId = <?php echo $userId; ?>;
         var fecha = fechaActual();
         var total = <?php echo $precioCarrito[0]['total_a_pagar']; ?>;
 
@@ -243,8 +320,7 @@ $precioCarrito = $carritoModel->costoCarrito();
         };
         $.post('./controlador/ventaControlador.php?opc=1', requestData,
           function(data) {
-            // Puedes manejar la respuesta del servidor aquí, por ejemplo, mostrar un mensaje de éxito.
-            //alert('Carrito agregado a la venta');
+            //  manejar la respuesta del servidor ;
           });
       });
     });

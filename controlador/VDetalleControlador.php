@@ -1,6 +1,8 @@
-<?php 
+<?php
+session_start();
 require_once '../models/vDetalleModel.php';
 require_once '../models/conexion.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
@@ -9,18 +11,19 @@ require_once '../email/PHPMailer/src/PHPMailer.php';
 require_once '../email/PHPMailer/src/SMTP.php';
 require_once '../email/PHPMailer/src/Exception.php';
 
-if(isset($_GET['opc'])){
+if (isset($_GET['opc'])) {
     $venta = new vDetalleModel();
 
-    switch($_GET['opc']){
+    switch ($_GET['opc']) {
         case 1:
             //insert
             $venta->crearVDetalle();
-            echo 'insertado xxd';
-         break;
+            
+            break;
         case 2:
-            $resul=$venta->obtenerId();
-            echo $resul;
+            $resul = $venta->obtenerId();
+            //echo $resul;
+            $correoUsuario = $_SESSION['email'];
             $mail = new PHPMailer(true);
 
             try {
@@ -30,17 +33,47 @@ if(isset($_GET['opc'])){
                 $mail->Host = 'smtp.gmail.com';
                 $mail->SMTPAuth = true;
                 $mail->Username = 'ab9621932@gmail.com';
-                $mail->Password = 'utxi qoqw pwdk ptki'; 
+                $mail->Password = 'utxi qoqw pwdk ptki';
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
                 $mail->Port = 465;
 
                 // Configurar remitente y destinatario
                 $mail->setFrom('ab9621932@gmail.com', 'OnlineStore');
-                $mail->addAddress('cg9554212@gmail.com', '');
+                $mail->addAddress($correoUsuario, '');
 
                 // Configurar cuerpo del correo
-                
-                $cuerpo = '';
+
+                $cuerpo = '<html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            th, td {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Detalles de la compra</h2>
+        <table>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Costo unitario</th>
+                <th>Fecha</th>
+                <th>Tu usuario</th>
+            </tr>';
                 if (!empty($resul)) {
                     foreach ($resul as $fila) {
                         $producto = $fila['Producto'];
@@ -48,13 +81,20 @@ if(isset($_GET['opc'])){
                         $cantidad = $fila['Cantidad'];
                         $fecha = $fila['Fecha'];
                         $usuario = $fila['Usuario'];
-                    
+
                         // Agregar información de cada producto al cuerpo del correo
-                        $cuerpo .= "<p>Detalles del producto: $producto, Cantidad: $cantidad, Importe: $importe, Fecha: $fecha, Usuario: $usuario</p>";
+                        $cuerpo .= "<tr>
+                        <td>$producto</td>
+                        <td>$cantidad</td>
+                        <td>$importe</td>
+                        <td>$fecha</td>
+                        <td>$usuario</td>
+                    </tr>";
                     }
                 } else {
-                    $cuerpo = '<p>No hay detalles de compra disponibles.</p>';
+                    $cuerpo .= '<tr><td colspan="5">No hay detalles de compra disponibles.</td></tr>';
                 }
+                $cuerpo .= '</table></body></html>';
 
                 // Configurar correo como HTML
                 $mail->isHTML(true);
@@ -71,15 +111,11 @@ if(isset($_GET['opc'])){
                 $mail->send();
 
                 echo 'Correo enviado con éxito';
-
             } catch (Exception $e) {
                 echo 'Error al enviar el correo: ' . $mail->ErrorInfo;
             }
             break;
-            
-        }
-    }else{
-        header('Location: ../index.html');
     }
-    
-    ?>
+} else {
+    header('Location: ../index.html');
+}
